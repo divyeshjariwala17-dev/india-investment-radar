@@ -1,0 +1,2 @@
+﻿IPO_ID,Company,Symbol,IssueType,Board,Status,OpenDate,CloseDate,PriceLow₹,PriceHigh₹,LotSize,IssueSizeCr,FreshIssueCr,OFSCr,EPS₹,NAV₹,PE,IndustryPE,RevenueGrowth3Y%,ProfitGrowth3Y%,ROE%,DebtEquity,QIBSub,NIISub,RetailSub,TotalSub,GMP%,PromoterHoldingPost%,UseOfFundsQuality,GovernanceRisk,BusinessQuality,Notes,Source,UpdatedAt
+IPO-EXAMPLE-IPO-LTD,Example IPO Ltd,,IPO,MAINBOARD,UPCOMING,2026-09-07,2026-09-07,100,110,100,500,350,150,5,40,22,28,20,25,18,0.4,0,0,0,0,0,65,GOOD,LOW,75,Replace this example with actual IPO data.,Manual / NSE / SEBI,2026-09-07T07:32:11

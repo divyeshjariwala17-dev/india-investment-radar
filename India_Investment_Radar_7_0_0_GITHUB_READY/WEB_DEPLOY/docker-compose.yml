@@ -1,0 +1,14 @@
+services:
+  radar:
+    build:
+      context: ..
+      dockerfile: WEB_DEPLOY/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    volumes:
+      - radar_data:/radar-data
+    environment:
+      - PORT=8501
+volumes:
+  radar_data:

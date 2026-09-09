@@ -1,0 +1,95 @@
+INDIA INVESTMENT RADAR 7.0.0 — FINAL LOCKED FEATURE CHECKLIST
+=============================================================
+
+DECISION / DISCOVERY
+[PASS] Daily Recommendations — one place
+[PASS] Today’s cross-asset opportunities
+[PASS] Stock Current / Entry / Target / Stop / ₹ + % potential/downside
+[PASS] I HAVE MONEY TODAY
+[PASS] Best Use of My Money — full optimizer
+[PASS] Go by Segment → category → exact product
+[PASS] Action Board
+[PASS] No forced recommendation when data/fit is weak
+
+MARKETS
+[PASS] All local NSE EQ stock universe from official NSE EOD/common data
+[PASS] ETFs
+[PASS] Complete current AMFI NAV universe + exact scheme history analysis
+[PASS] Physical Gold / Silver timing with auto indicative reference + manual dealer override
+[PASS] Crypto supported universe
+[PASS] Fixed Income / T-Bill / G-Sec / SDL / bond watchlist and YTM logic
+[PASS] IPO / SME IPO
+[PASS] Corporate Events / announcements / event gates
+[PASS] Market Outlook / macro context
+
+OTHER INVESTMENT MASTER UNIVERSE
+[PASS] Savings / sweep
+[PASS] Bank FD — General / Senior / Tax Saving
+[PASS] Small Finance Bank FD
+[PASS] NBFC / Corporate FD
+[PASS] Bank RD / Post Office RD
+[PASS] Post Office Savings / 1Y / 2Y / 3Y / 5Y Time Deposit / MIS
+[PASS] PPF / NSC / KVP / SCSS / Sukanya
+[PASS] 91D / 182D / 364D T-Bill
+[PASS] Dated G-Sec / SDL
+[PASS] RBI/government savings bond placeholder/current-equivalent tracking
+[PASS] Corporate Bonds / NCD
+[PASS] Target-maturity debt products
+[PASS] NPS Tier I / Tier II
+[PASS] EPF / VPF
+[PASS] Annuity / retirement income
+[PASS] REIT / InvIT
+[PASS] International ETF / Fund
+[PASS] Secondary-market sovereign-gold instruments
+[PASS] Physical Gold / Silver
+[PASS] Real Estate
+[PASS] PMS / AIF / SIF
+[PASS] Unlisted / Pre-IPO
+[PASS] P2P / Private Credit
+[PASS] Insurance-linked investment review
+[PASS] Collectibles / other manual-review alternatives
+[PASS] ActiveStatus + DataConfidence + current rate/date controls
+
+PORTFOLIO / RESEARCH
+[PASS] Lot-wise portfolio
+[PASS] Import/update/export
+[PASS] Current-value refresh on demand/Daily Update
+[PASS] Position sizing
+[PASS] Alerts
+[PASS] Recommendation history / forward accuracy
+[PASS] Backtest
+[PASS] Walk-forward validation
+[PASS] Portfolio health / concentration warnings
+
+DATA / RELIABILITY
+[PASS] Daily Update visible progress
+[PASS] PASS/WARNING/FAIL report
+[PASS] Last verified cache preservation
+[PASS] Data health and freshness
+[PASS] Source registry
+[PASS] Source failure/cooldown state
+[PASS] Free-first policy
+[PASS] Automatic paid usage OFF / spend limit ₹0
+[PASS] Manual verified fallback where no universal reliable free feed exists
+[PASS] REVIEW REQUIRED / DO NOT ACT behavior for inadequate critical data
+
+UI / OPERATIONS
+[PASS] Professional Navy default theme
+[PASS] Clean Light / Dark Terminal / Minimal White / Custom
+[PASS] Abstract market / gradient / solid / custom image / no background
+[PASS] Configurable font scale / density / radius / card opacity
+[PASS] Configurable default landing page
+[PASS] Mobile responsive CSS
+[PASS] Fast lazy/on-demand heavy calculations
+[PASS] Clear process feedback instead of blank/frozen appearance
+
+DEPLOYMENT / PORTABILITY
+[PASS] One Windows installer
+[PASS] Desktop + Start Menu shortcut
+[PASS] Same-Wi-Fi phone launcher
+[PASS] Docker web-deployment package
+[PASS] Persistent Docker volume pattern
+[PASS] GitHub QA workflow
+[PASS] Local backup/restore
+[PASS] Safe local uninstaller
+[PASS] No provider lock-in by design

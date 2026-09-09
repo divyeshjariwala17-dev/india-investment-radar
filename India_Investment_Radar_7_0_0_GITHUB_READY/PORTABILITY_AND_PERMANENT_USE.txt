@@ -1,0 +1,35 @@
+INDIA INVESTMENT RADAR 7.0.0 — PORTABILITY & PERMANENT USE
+=========================================================
+
+LOCAL WINDOWS
+-------------
+The installed local application, local data, configuration and backups remain on the PC until you remove them.
+No application subscription is built into the local Radar.
+
+DEPENDENCIES
+------------
+The first installation requires Python 3.11+ and internet access to install the locked open-source Python packages.
+External market/public data sources can change availability, URLs, formats, quotas or policies in the future.
+The Radar therefore preserves verified cache and keeps replaceable source adapters/registry instead of guaranteeing a third-party service forever.
+
+MOBILE / NETWORK
+----------------
+The included same-Wi-Fi launcher serves the same responsive app over the local network while the Windows PC is ON.
+
+ANYWHERE / PC OFF
+-----------------
+The WEB_DEPLOY folder is Docker-ready for an always-on server/VM.
+For permanent hosted data, mount persistent storage at /radar-data.
+The deployment is provider-portable so you can move away from a host if its free plan changes.
+
+GITHUB
+------
+Keep source code in a private repository if desired.
+Do not commit portfolio data, private keys, passwords or API secrets.
+The included GitHub Actions workflow runs verify_install.py after code changes.
+
+BACKUP / RESTORE
+----------------
+Use System Check for local backup/restore.
+Keep an additional external copy of important backups before moving PCs/servers.
+Use the safe uninstaller when removing the local app.

@@ -1,0 +1,157 @@
+INDIA INVESTMENT RADAR 7.0.0 — SIMPLE USER GUIDE
+================================================
+
+1. INSTALL ONCE
+---------------
+Run:
+RUN_THIS_ONLY_7_0_0_FULL_RELIABILITY_PREMIUM.bat
+
+After successful verification, use the Desktop shortcut:
+India Investment Radar
+
+2. NORMAL DAILY USE
+-------------------
+A. Open Radar.
+B. Press DAILY UPDATE when you need fresh data.
+C. Watch the progress steps; do not close the app while an update is running.
+D. When finished, open Daily Recommendations.
+E. Reverify an important final transaction externally before committing money.
+
+3. DAILY RECOMMENDATIONS — DEFAULT PAGE
+---------------------------------------
+This page is intentionally decision-focused.
+It shows:
+• overall data/actionability status
+• best opportunities across asset classes
+• top actionable stocks with Current / Entry / Target 1 / Target 2 / potential ₹ + % / Stop / downside ₹ + % / R:R / duration / confidence
+• Mutual Fund shortlist with NAV / 1Y / 3Y / 5Y / drawdown / confidence
+• Fixed-Income shortlist when a verified current Yield/YTM is available
+• Gold/Silver/Crypto current cached decision summary
+• IPO/SME IPO shortlist
+• I HAVE MONEY TODAY mini-optimizer
+• portfolio warnings/action-needed items
+• corporate events that can block/review a shortlisted stock
+
+4. BEST USE OF MY MONEY
+-----------------------
+Use this for the full optimizer.
+Enter amount, contribution type, duration/exact required date, risk, liquidity, reserve, optional target/tax/inflation assumptions and exclusions.
+The engine compares all eligible candidates with adequate data and returns:
+• exact allocation ₹ + %
+• timing
+• risk/confidence
+• downside/base/upside scenarios
+• why this plan
+• why not alternatives
+• full 13-question explanation
+• tracking/review date
+
+5. GO BY SEGMENT
+----------------
+Use when you already want one segment: Gold, Silver, Stocks, Mutual Funds, Fixed Income/Bonds, IPO, Crypto or Other Investments.
+Flow:
+Segment → best category/product form → exact product → suggested amount → timing → scenarios → explanation.
+
+6. OTHER INVESTMENTS — FULL MASTER LIST
+---------------------------------------
+The master list includes:
+• savings/sweep
+• bank general/senior/tax-saving FD
+• Small Finance Bank FD
+• NBFC/corporate FD
+• Bank/Post Office RD
+• Post Office Savings / 1Y/2Y/3Y/5Y TD / MIS
+• PPF / NSC / KVP / SCSS / Sukanya
+• 91D/182D/364D T-Bills
+• G-Sec / SDL
+• government/RBI savings-bond type products when currently available
+• corporate bonds/NCDs
+• target-maturity debt products
+• NPS Tier I/Tier II
+• EPF/VPF
+• annuity/retirement income
+• REIT / InvIT
+• international ETF/fund
+• sovereign-gold secondary-market securities
+• physical Gold/Silver
+• real estate
+• PMS/AIF/SIF
+• unlisted/pre-IPO
+• P2P/private credit
+• insurance-linked products
+• collectibles/other alternatives
+
+For products without a universal reliable free live feed, update the current verified rate/product data. Missing critical product data results in INPUT REQUIRED / REVIEW REQUIRED instead of a fabricated recommendation.
+
+7. STOCKS
+---------
+All NSE EQ symbols found in the locally downloaded official NSE history remain searchable.
+Strong Buy is intentionally strict.
+Full cards include technical/fundamental/momentum scores, entry, levels, targets, stop, R:R, historical evidence, walk-forward evidence, event/news safety and confidence.
+
+8. MUTUAL FUNDS
+---------------
+The current AMFI NAV universe is loaded and searchable.
+Exact scheme analysis uses downloaded history and shows NAV, CAGR/returns, volatility, drawdown, consistency, action, reason and what changes the call.
+
+9. PHYSICAL GOLD / SILVER
+-------------------------
+Physical purchase timing is the main mode.
+The app can use an automatic indicative market reference and/or your exact local dealer quote.
+Gold is displayed per 10g; Silver per kg.
+Exact local quote is preferred for actual physical-buy ₹ levels.
+
+10. FIXED INCOME
+----------------
+The watchlist includes major T-Bill/G-Sec/SDL/government/corporate bond forms.
+Enter/verify the exact current Yield/YTM for the instrument you are considering.
+Missing Yield/YTM deliberately prevents a false recommendation.
+
+11. PORTFOLIO
+-------------
+Record/import actual purchase lots.
+The app aggregates quantity, average cost, invested amount, current value and P&L.
+Daily Update or the explicit refresh action updates supported current values.
+
+12. DATA / SOURCE HEALTH
+------------------------
+Open Auto Data Center to see:
+• freshness
+• trust/source
+• fallback
+• source registry
+• cooldown/failure state
+• current attention items
+
+Permanent rule:
+Official/free source → free fallback where integrated → last verified cache → manual verified input → REVIEW REQUIRED.
+Automatic paid usage/subscription/upgrade is OFF.
+
+13. UI / BACKGROUND
+-------------------
+Settings → Appearance & UI Configuration supports:
+• Professional Navy / Clean Light / Dark Terminal / Minimal White / Custom
+• Abstract Market / Gradient / Solid / Custom Image / None
+• density
+• font scale
+• card opacity
+• roundness
+• clean analysis-page background control
+• default landing page
+
+14. MOBILE
+----------
+Same Wi-Fi:
+Use Desktop shortcut "India Investment Radar - Phone Same WiFi" and open the URL shown on your phone.
+The PC must remain ON.
+
+Anywhere with PC OFF:
+Deploy the WEB_DEPLOY Docker package to an always-on online server/VM with persistent storage.
+See WEB_DEPLOY/README_ONLINE.txt.
+
+15. BACKUP / REMOVAL
+--------------------
+System Check can create/restore local backups.
+Use UNINSTALL_RADAR_SAFE.bat if you want to remove the local app.
+The safe uninstaller can make a Documents backup before removing local program/data.
+Cloud/online deployments are separate and are never silently deleted by the local uninstaller.

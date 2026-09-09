@@ -1,0 +1,13 @@
+symbol,company_name,sector,market_cap_cr,roce,roe,de,opm_pct,pe,rs_rating,profit_growth_5y,sales_growth_3y,data_as_of,source
+BSE,BSE Ltd,Financial Services,128210,60,46,0,64.25,45.3,80,77.2872,76.9385,2026-09-04,Finmagine
+OFSS,Oracle Financial Services Software Ltd,Information Technology,104718,45.3,32.6,0,30.3525,30.6,87,8.4143,10.4236,2026-09-04,Finmagine
+HINDCOPPER,Hindustan Copper Ltd,Commodities,50667,42.4,32.9,0.03,49.25,41.9,86,52.9584,22.4368,2026-09-04,Finmagine
+NATIONALUM,National Aluminium Co Ltd,Commodities,68710,39.6,29.4,0,48,10.2,90,34.8711,7.7655,2026-09-04,Finmagine
+DPABHUSHAN,D P Abhushan Ltd,Consumer Discretionary,3365,39.6,40.9,0.46,8.25,14,84,51.0061,27.2891,2026-09-04,Finmagine
+MPSLTD,MPS Ltd,Consumer Discretionary,4423,38.7,29.7,0.1,32.5,24.2,89,24.0049,15.3031,2026-09-04,Finmagine
+SOLARINDS,Solar Industries India Ltd,Commodities,182916,38.1,32.6,0.24,12.925,91.9,90,43.2457,12.4541,2026-09-04,Finmagine
+NETWEB,Netweb Technologies India Ltd,Information Technology,30387.3,37.5,32.8,0.39,6.4275,116.62,87,91.4941,69.9408,2026-09-04,Finmagine
+CHENNPETRO,Chennai Petroleum Corporation Ltd,Energy,20866,34.9,31.8,0.18,8.5,5,93,64.5772,-6.0998,2026-09-04,Finmagine
+CASTROLIND,Castrol India Ltd,Energy,18823,60.3,45.9,0.03,24.25,17.5,44,10,6.2238,2026-09-04,Finmagine
+TIPSMUSIC,Tips Music Ltd,Consumer Discretionary,8284,118,87.6,0.02,69.75,38.6,63,38.2287,26.2163,2026-09-04,Finmagine
+HBLENGINE,HBL Engineering Ltd,Industrials,18339,58.4,45.3,0.03,28.5,22.9,27,125.372,34.1225,2026-09-04,Finmagine

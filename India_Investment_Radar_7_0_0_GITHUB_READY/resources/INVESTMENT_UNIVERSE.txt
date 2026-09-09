@@ -1,0 +1,65 @@
+INDIA INVESTMENT RADAR — PERMANENT MASTER INVESTMENT UNIVERSE
+=============================================================
+
+MARKET-LINKED
+• NSE equities — full local EQ universe from downloaded NSE EOD/common data
+• ETFs — broad market / sector / thematic / factor / debt / Gold / Silver / international where listed
+• Mutual Funds — complete current AMFI NAV universe; Equity / Debt / Hybrid / Solution / Index / ETF / FoF / Gold / International categories
+• IPO / SME IPO / new issues
+• REIT / InvIT
+• International ETF / Fund products available to the investor
+• Crypto supported liquid universe
+
+PRECIOUS / REAL ASSETS
+• Physical Gold
+• Physical Silver
+• Gold/Silver ETF/Fund products
+• Secondary-market sovereign-gold securities where available
+• Direct Real Estate
+
+FIXED RETURN / SOVEREIGN / DEBT
+• Savings / sweep
+• General / Senior / Tax-saving Bank FD
+• Small Finance Bank FD
+• NBFC / Corporate FD
+• Bank / Post Office RD
+• Post Office Savings
+• Post Office 1Y / 2Y / 3Y / 5Y Time Deposits
+• Post Office MIS
+• PPF / NSC / KVP / SCSS / Sukanya
+• 91D / 182D / 364D T-Bills
+• Dated G-Sec
+• SDL
+• RBI / government savings-bond products/current equivalent when available
+• Corporate bonds / NCDs
+• Target-maturity debt products
+
+RETIREMENT / PENSION
+• NPS Tier I / Tier II
+• EPF / VPF where eligible
+• Immediate/deferred annuity and retirement-income products
+
+ALTERNATIVE / MANUAL REVIEW
+• PMS
+• AIF
+• SIF / specialized regulated funds where available
+• Unlisted / pre-IPO equity
+• P2P / private credit
+• Insurance-linked investment products
+• Collectibles / other alternatives
+
+SPECIAL OPPORTUNITIES / EVENTS
+• Rights issue
+• OFS
+• Buyback / tender offer
+• Open offer / delisting / exit offer
+• Bonus / split / consolidation
+• Merger / demerger / scheme
+• Dividend / special dividend
+• Other material corporate actions/announcements
+
+RULE
+----
+The master universe is broader than the Daily Recommendations page.
+Daily Recommendations shows only qualified/actionable items.
+Products without reliable current data remain in the universe but are INPUT REQUIRED / REVIEW REQUIRED rather than given a fabricated BUY call.

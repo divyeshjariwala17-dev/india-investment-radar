@@ -1,0 +1,15 @@
+DataFamily,Primary,Backup1,Backup2,Critical,FreeFirst,Notes
+NSE Stocks / ETFs,NSE official EOD/common files,Last verified local NSE cache,Manual verified import,YES,YES,EOD technical engine; never fabricate missing sessions.
+BSE / Corporate Cross-check,BSE official public filings/market data where available,NSE official data,Last verified local cache,NO,YES,"Cross-check/fallback, not mandatory for every workflow."
+Corporate Events,NSE official corporate actions/announcements/results,BSE official filings where available,Last verified event cache,YES,YES,BLOCK/REVIEW event gate.
+Mutual Funds NAV,AMFI Complete NAV,MFAPI public fallback,Last verified AMFI/MFAPI cache,YES,YES,Latest published NAV + on-demand history.
+Gold / Silver,Automatic public bullion/FX reference when available,NSE Gold/Silver ETF market proxies,Manual local dealer quote,YES,YES,Physical retail quote can override indicative benchmark.
+Government / RBI,RBI / Government official information,NSE debt/public market information where available,Manual verified official-rate input,YES,YES,"T-Bills, G-Secs, SDL and policy/reference data."
+Post Office / Small Savings,Government/India Post official notifications,Last verified official-rate cache,Manual official-rate input,NO,YES,PPF/NSC/KVP/SCSS/Sukanya/PO products; rate validity is period-based.
+FD / RD,Official bank/SFB/NBFC published rates where configured,Last verified institution quote,Manual current official quote,NO,YES,No universal free authoritative API exists for all institutions.
+IPO / SME IPO,NSE/SEBI official issue data and documents where available,Last verified issue cache,Manual verified RHP/issue inputs,YES,YES,GMP remains optional/unofficial/low weight.
+NPS,NPS Trust official published scheme data where integrated,Last verified NPS data,Manual official input,NO,YES,Market-linked retirement analysis.
+Crypto,Public liquid-market endpoint,Alternative public endpoint when configured,Last verified crypto cache,NO,YES,Confidence reduced on feed disagreement/unavailability.
+Macro / FX,Public market series + official Indian references where integrated,Last verified macro cache,Manual verified context,NO,YES,Context only; core NSE engine can continue if unavailable.
+International,Indian-listed NSE/AMFI products first,Public foreign-market reference when available,Last verified cache/manual input,NO,YES,No paid dependency required for core Indian product analysis.
+Hosting / Online,Configured free-tier host,Portable Docker deployment to alternate host,Local Windows app,NO,YES,No automatic paid upgrade; provider migration supported.

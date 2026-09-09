@@ -1,0 +1,6 @@
+﻿InvestmentID,AssetType,Symbol,Name,PurchaseDate,Quantity,Unit,PriceBasisQty,BuyPrice₹,InvestedAmount₹,CurrentPrice₹,BrokerSource,Account,Goal,Strategy,Notes,UpdatedAt
+,STOCK,RELIANCE,,2026-09-07,10.0,Shares,1,0,,,Dhan,Main,Wealth,Long Term,,
+,MUTUAL FUND,,Your Scheme Name / Code,2026-09-07,0.0,Units,1,0,50000,,AMC/Platform,Folio,Retirement,5+ Years,,
+,GOLD PHYSICAL,GOLD,24K Gold Coin/Bar,2026-09-07,10.0,grams,10,0,,,Dealer,Physical,Wealth,3+ Years,BuyPrice is rate per 10g,
+,SILVER PHYSICAL,SILVER,Silver Bar,2026-09-07,1.0,kg,1,0,,,Dealer,Physical,Wealth,3+ Years,BuyPrice is rate per kg,
+,CRYPTO,BTC,Bitcoin,2026-09-07,0.01,Coins,1,0,,,Exchange,Main,High Growth,High Risk,,

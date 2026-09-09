@@ -64,7 +64,7 @@ def main():
         except Exception as e:problems.append(f'{p.name}: contract audit {e}')
     try:
         cfg=json.loads((BASE/'config.json').read_text(encoding='utf-8'))
-        if not str(cfg.get('app_version','')).startswith('7.0.0'):problems.append('wrong version')
+        if not str(cfg.get('app_version','')).startswith(('7.0.0','7.0.1')):problems.append('wrong version')
     except Exception as e:problems.append(f'config {e}')
     try:
         src=(BASE/'app.py').read_text(encoding='utf-8');t=ast.parse(src)
@@ -135,7 +135,7 @@ def main():
         print('VERIFY FAILED')
         for x in problems:print(' -',x)
         return 1
-    print('VERIFY PASS — INDIA INVESTMENT RADAR 7.0.0 FULL RELIABILITY PREMIUM WEB-READY')
+    print('VERIFY PASS — INDIA INVESTMENT RADAR 7.0.1 FULL RELIABILITY PREMIUM CLOUD-PERSISTENT')
     print(f'Python modules checked: {len(files)}')
     print('Undefined globals / local imports / required arguments: PASS')
     print('Premium navigation / Daily Recommendations / no-Delta UI audit: PASS')

@@ -37,14 +37,22 @@ from daily_decision import build_daily_actions, headline as daily_headline
 from daily_recommendations import stock_rows as daily_stock_rows, mf_rows as daily_mf_rows, fixed_rows as daily_fixed_rows, ipo_rows as daily_ipo_rows, overall_action_status as daily_action_status
 from ui_config import load_ui_settings, save_ui_settings, reset_ui_settings, save_background, clear_background, build_css as build_ui_css, PRESETS as UI_PRESETS
 from source_manager import load_registry as load_source_registry, save_registry as save_source_registry, runtime_status as source_runtime_status, no_paid_usage_policy, record_success as source_success, record_failure as source_failure
+from cloud_sync import pull_once as cloud_pull_once, push_changed as cloud_push_changed, status as cloud_status
 
 BASE=Path(__file__).resolve().parent
+cloud_pull_once(BASE/'data')
 CFG=json.loads((BASE/'config.json').read_text(encoding='utf-8'))
 UI_SETTINGS=load_ui_settings()
 SEED=BASE/'fundamentals_seed.csv'
 LOG=BASE/'data'/'recommendation_history.csv'
 
 st.set_page_config(page_title='India Investment Radar',page_icon='🇮🇳',layout='wide',initial_sidebar_state='expanded')
+
+def cloud_rerun():
+    try: cloud_push_changed(BASE/'data')
+    except Exception: pass
+    st.rerun()
+
 
 
 st.markdown('''<style>
@@ -444,7 +452,7 @@ with st.sidebar:
     if cache:st.caption('Dashboard: '+str(cache.get('meta',{}).get('calculated_at','saved')))
     if st.button('🔄 DAILY UPDATE',type='primary',use_container_width=True):
         run_update_pipeline(full=False)
-        st.cache_data.clear();st.rerun()
+        st.cache_data.clear();cloud_rerun()
     _lus=st.session_state.get('last_update_summary')
     _lur=st.session_state.get('last_update_report')
     if _lus:
@@ -455,15 +463,15 @@ with st.sidebar:
     with st.expander('🛠 Maintenance — occasional',expanded=False):
         st.caption('Not needed for normal daily use.')
         if st.button('⚡ Rebuild saved dashboard',use_container_width=True):
-            box=st.empty();recalc_and_save(lambda x:box.caption(x));clear_runtime_caches();box.success('Dashboard rebuilt.');st.rerun()
+            box=st.empty();recalc_and_save(lambda x:box.caption(x));clear_runtime_caches();box.success('Dashboard rebuilt.');cloud_rerun()
         if st.button('📥 First Setup / Full Data',use_container_width=True):
             run_update_pipeline(full=True)
-            st.cache_data.clear();st.rerun()
+            st.cache_data.clear();cloud_rerun()
         if st.button('🧠 Build all validation',use_container_width=True):
             box=st.empty();h=load_history(max_sessions=CFG['history_sessions'])
             with st.spinner('Building validation evidence...'):
                 run_backtest(h,CFG['backtest_universe_size'],lambda x:box.caption('Backtest: '+x));run_walk_forward(h,CFG['backtest_universe_size'],lambda x:box.caption('Walk-forward: '+x));recalc_and_save(lambda x:box.caption(x));clear_runtime_caches()
-            box.success('Validation ready.');st.rerun()
+            box.success('Validation ready.');cloud_rerun()
     st.caption('⚡ Full Function Mode — all modules available; heavy work runs only when requested.')
 
 # Apply the saved theme/background after navigation is known. Analysis pages default to a cleaner background unless enabled in Settings.
@@ -760,7 +768,7 @@ if active_page=='💰 Best Use of My Money':
                 pid=save_plan(summ,plan,req['mode'])
                 st.success(f'Plan saved locally as {pid}. Record actual purchases later in My Portfolio.')
             if ctrack2.button('🧹 Clear this optimizer result',use_container_width=True,key='clear_optimizer'):
-                st.session_state.pop('last_optimizer_request',None);st.session_state.pop('optimizer_result_cache',None);st.session_state.pop('optimizer_needs_run',None);st.rerun()
+                st.session_state.pop('last_optimizer_request',None);st.session_state.pop('optimizer_result_cache',None);st.session_state.pop('optimizer_needs_run',None);cloud_rerun()
             saved_plans=load_plans()
             if not saved_plans.empty:
                 with st.expander('Tracked allocation plans'):
@@ -997,7 +1005,7 @@ if active_page=='💼 My Portfolio':
     pfast1,pfast2=st.columns([1,3])
     if pfast1.button('🔄 Refresh current values',use_container_width=True,key='portfolio_refresh_prices'):
         with st.spinner('Refreshing current values from downloaded market data...'):pres=refresh_saved_portfolio_prices(radar,mf,bonds)
-        if pres.get('ok'):st.success(pres.get('message'));st.rerun()
+        if pres.get('ok'):st.success(pres.get('message'));cloud_rerun()
         else:st.warning(pres.get('message'))
     pfast2.caption('Fast opening: no full market/crypto scan is performed just by entering this page.')
 
@@ -1111,7 +1119,7 @@ if active_page=='💼 My Portfolio':
             merged.to_csv(portfolio_file,index=False)
             create_backup(CFG.get('backup_keep',12))
             st.success('Investment lot saved. It is now part of your permanent local portfolio.')
-            st.rerun()
+            cloud_rerun()
 
     with ptab[2]:
         st.markdown('### Download format / import / update')
@@ -1132,7 +1140,7 @@ if active_page=='💼 My Portfolio':
                     merged.to_csv(portfolio_file,index=False)
                     create_backup(CFG.get('backup_keep',12))
                     st.success(f'Portfolio saved: {len(merged)} purchase lot(s).')
-                    st.rerun()
+                    cloud_rerun()
             except Exception as e:st.error(f'Could not read the import file: {e}')
 
     with ptab[3]:
@@ -1143,7 +1151,7 @@ if active_page=='💼 My Portfolio':
             b1,b2,b3=st.columns(3)
             if b1.button('💾 SAVE EDITED PORTFOLIO',type='primary',use_container_width=True):
                 cleaned=normalize_portfolio(pd.DataFrame(edited))
-                cleaned.to_csv(portfolio_file,index=False);create_backup(CFG.get('backup_keep',12));st.success('Edited portfolio saved.');st.rerun()
+                cleaned.to_csv(portfolio_file,index=False);create_backup(CFG.get('backup_keep',12));st.success('Edited portfolio saved.');cloud_rerun()
             b2.download_button('⬇️ Export current CSV',saved_lots.to_csv(index=False).encode('utf-8-sig'),'My_Investment_Portfolio.csv','text/csv',use_container_width=True)
             b3.download_button('⬇️ Export current Excel',dataframe_to_xlsx_bytes(saved_lots),'My_Investment_Portfolio.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',use_container_width=True)
             st.caption('Delete a row in the editor and press SAVE to remove that purchase lot. Existing backups remain available in the app data folder.')
@@ -1446,7 +1454,7 @@ if active_page=='💰 Mutual Funds':
             st.success(res.get('message','Refresh finished.'))
         else:
             st.warning(res.get('message','Refresh finished.'))
-        st.rerun()
+        cloud_rerun()
     if u.empty:
         st.warning('Complete Mutual Fund universe is not cached yet. Click the refresh button above or run DAILY UPDATE.')
     else:
@@ -1598,7 +1606,7 @@ if active_page=='🚀 IPO / New Issues':
         edit=st.data_editor(ipos if not ipos.empty else ipo_template(),use_container_width=True,num_rows='dynamic',height=520,key='ipo_editor')
         c1,c2,c3=st.columns(3)
         if c1.button('💾 Save IPO Data',use_container_width=True):
-            save_ipos(edit);st.success('IPO data saved locally.');st.rerun()
+            save_ipos(edit);st.success('IPO data saved locally.');cloud_rerun()
         csv=ipo_template().to_csv(index=False).encode('utf-8-sig')
         c2.download_button('⬇️ Download IPO CSV Template',csv,'IPO_IMPORT_TEMPLATE.csv','text/csv',use_container_width=True)
         up=c3.file_uploader('Import IPO CSV/XLSX',type=['csv','xlsx','xls'],key='ipo_import')
@@ -1608,7 +1616,7 @@ if active_page=='🚀 IPO / New Issues':
                 inc=normalize_ipos(inc)
                 old=load_ipos()
                 combo=pd.concat([old,inc],ignore_index=True).drop_duplicates('IPO_ID',keep='last') if not old.empty else inc
-                save_ipos(combo);st.success(f'Imported {len(inc)} IPO row(s).');st.rerun()
+                save_ipos(combo);st.success(f'Imported {len(inc)} IPO row(s).');cloud_rerun()
             except Exception as e:st.error('IPO import failed: '+str(e))
 
 if active_page=='🧭 Other Investments':
@@ -1626,7 +1634,7 @@ if active_page=='🧭 Other Investments':
     st.markdown('### Update current rates / product details')
     edit=st.data_editor(opts,use_container_width=True,num_rows='dynamic',height=440,key='other_options_editor')
     if st.button('💾 Save Investment Option Inputs'):
-        save_investment_options(edit);st.success('Saved locally.');st.rerun()
+        save_investment_options(edit);st.success('Saved locally.');cloud_rerun()
     st.markdown('''#### Permanent Master Investment Universe
 - Bank savings / sweep FD / general FD / senior-citizen FD / Small Finance Bank FD / NBFC & corporate FD / tax-saving FD / Bank & Post Office RD
 - Post Office Savings, 1Y/2Y/3Y/5Y Time Deposits, MIS
@@ -1697,10 +1705,10 @@ if active_page=='🩺 System Check':
         r1,r2=st.columns(2)
         if r1.button('YES — RESTORE',use_container_width=True,key='restore_yes'):
             res=restore_backup();st.session_state['confirm_restore_backup']=False
-            if res.get('ok'):st.success(res.get('message'));st.cache_data.clear();st.rerun()
+            if res.get('ok'):st.success(res.get('message'));st.cache_data.clear();cloud_rerun()
             else:st.error(res.get('message'))
         if r2.button('Cancel',use_container_width=True,key='restore_no'):
-            st.session_state['confirm_restore_backup']=False;st.rerun()
+            st.session_state['confirm_restore_backup']=False;cloud_rerun()
     st.caption('For dependency/shortcut repair, run REPAIR_INSTALLATION.bat from the final setup package. It does not delete your data.')
 
 if active_page=='⚙️ Settings':
@@ -1743,9 +1751,9 @@ if active_page=='⚙️ Settings':
     if s1.button('💾 SAVE UI SETTINGS',type='primary',use_container_width=True,key='save_ui_settings_btn'):
         new=dict(cur);new.update({'theme_preset':ui_preset,'background_mode':ui_bg,'density':ui_density,'font_scale':ui_scale,'radius':ui_radius,'card_opacity':ui_card,'show_background_on_analysis_pages':ui_analysis_bg,'default_page':ui_default,'background_overlay':ui_overlay,'background_blur':ui_blur,'background_opacity':ui_opacity,'custom_colors':custom_colors})
         if uploaded_bg is not None:new['background_path']=save_background(uploaded_bg)
-        save_ui_settings(new);st.success('UI settings saved. They will persist after restart/update.');st.rerun()
+        save_ui_settings(new);st.success('UI settings saved. They will persist after restart/update.');cloud_rerun()
     if s2.button('↩ RESET PROFESSIONAL DEFAULT',use_container_width=True,key='reset_ui_settings_btn'):
-        clear_background();reset_ui_settings();st.success('Professional default restored.');st.rerun()
+        clear_background();reset_ui_settings();st.success('Professional default restored.');cloud_rerun()
 
     with st.expander('Optional Fundamentals Provider — Advanced',expanded=False):
         key=load_local_api_key()
@@ -1788,7 +1796,7 @@ if active_page=='📅 Corporate Events':
             st.success(res.get('message','Refresh finished.'))
         else:
             st.warning(res.get('message','Refresh finished.'))
-        st.rerun()
+        cloud_rerun()
     ev=cached_events()
     if ev.empty:
         st.warning('Corporate-event cache is empty. Click refresh above or run DAILY UPDATE.')
@@ -1851,10 +1859,17 @@ if active_page=='🧠 Auto Data Center':
     with st.expander('Edit source priority/notes — advanced',expanded=False):
         regedit=st.data_editor(regdf,use_container_width=True,num_rows='dynamic',key='source_registry_editor')
         if st.button('💾 Save Source Registry',key='save_source_registry_btn'):
-            save_source_registry(regedit);st.success('Source registry saved locally.');st.rerun()
+            save_source_registry(regedit);st.success('Source registry saved locally.');cloud_rerun()
     runtime=source_runtime_status()
     if runtime is not None and not runtime.empty:
         st.markdown('### Recent source attempts / cooldowns')
         st.dataframe(runtime,use_container_width=True,hide_index=True)
         st.caption('When a source is rate-limited or temporarily failing, the Radar stores the cooldown/failure state instead of repeatedly hammering the same source.')
     st.markdown('### Permanent trust rule');st.write('• Official/verified data is preferred whenever available.');st.write('• Free alternative / last verified cache is used when appropriate; paid usage is never started automatically.');st.write('• Market proxy / indicative data is clearly labelled and is not presented as an exact local transaction quote.');st.write('• Manual inputs remain only where a universal reliable live feed is not available.');st.write('• Stale/missing critical data must reduce recommendation confidence or block a high-confidence call.');st.write('• Last valid cache is preserved so a temporary source outage does not erase the system.');st.info('Use DAILY UPDATE for the normal refresh cycle. It now shows every running step, PASS/WARNING/FAIL status and preserves verified cache if an optional source fails.')
+
+
+# Persist critical user-created state when cloud storage is configured.
+try:
+    cloud_push_changed(BASE/'data')
+except Exception:
+    pass

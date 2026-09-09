@@ -1,5 +1,5 @@
 {
-  "app_version": "7.0.0 FULL RELIABILITY PREMIUM WEB-READY — PERMANENT MASTER",
+  "app_version": "7.0.1 FULL RELIABILITY PREMIUM CLOUD-PERSISTENT \u2014 PERMANENT MASTER",
   "history_sessions": 420,
   "min_history_for_radar": 90,
   "min_price": 20,
@@ -159,7 +159,7 @@
   },
   "physical_reference": {
     "automatic_converted_reference": true,
-    "method": "Global futures × USDINR conversion; local/dealer quote overrides",
+    "method": "Global futures \u00d7 USDINR conversion; local/dealer quote overrides",
     "not_retail_final_rate": true
   },
   "corporate_events_back_days": 45,
@@ -175,7 +175,7 @@
   "lazy_page_loading": true,
   "optimizer_result_cache": "SESSION",
   "segment_result_cache": "SESSION",
-  "default_landing_page": "📣 Daily Recommendations",
+  "default_landing_page": "\ud83d\udce3 Daily Recommendations",
   "daily_recommendations_page": true,
   "full_master_investment_universe": true,
   "free_first_source_policy": true,

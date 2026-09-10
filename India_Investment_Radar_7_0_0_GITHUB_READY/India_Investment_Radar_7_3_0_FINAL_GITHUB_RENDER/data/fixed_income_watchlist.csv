@@ -1,0 +1,13 @@
+Instrument,Type,Yield%,MaturityYears,CreditRisk,Liquidity,SourceNote
+91-Day T-Bill,Government,,0.25,VERY LOW,HIGH,Enter current RBI auction/market yield before use
+182-Day T-Bill,Government,,0.5,VERY LOW,HIGH,Enter current RBI auction/market yield before use
+364-Day T-Bill,Government,,1.0,VERY LOW,HIGH,Enter current RBI auction/market yield before use
+2Y G-Sec,Government,,2.0,VERY LOW,HIGH,Replace with exact current security/YTM before use
+5Y G-Sec,Government,,5.0,VERY LOW,HIGH,Replace with exact current security/YTM before use
+10Y G-Sec,Government,,10.0,VERY LOW,HIGH,Replace with exact current benchmark/current security YTM before use
+Long-Duration G-Sec,Government,,20.0,VERY LOW,MEDIUM/HIGH,Use exact security and current YTM; duration risk is high despite sovereign credit quality
+SDL — Exact State Security,State Government,,10.0,VERY LOW,MEDIUM,Replace with exact SDL and current market/auction YTM
+RBI Floating Rate Savings Bond / Current Equivalent,Government Savings,,7.0,VERY LOW,LOW,"Verify current availability, reset formula, lock-in and eligibility from official terms"
+AAA PSU / Corporate Bond,Corporate,,3.0,LOW,MEDIUM,"Replace with exact security, rating, YTM, call/put terms and liquidity"
+AA Corporate Bond / NCD,Corporate,,3.0,MEDIUM,LOW/MEDIUM,Higher credit risk; use exact security/rating/current YTM and concentration limits
+Outstanding Tax-Free Bond,Corporate / PSU,,5.0,LOW,LOW/MEDIUM,Only if an exact outstanding listed bond is available; compare post-tax YTM and liquidity

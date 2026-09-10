@@ -1,0 +1,2 @@
+# Optional performance/compression dependency. The Radar safely falls back to CSV.GZ when unavailable.
+pyarrow>=16,<30

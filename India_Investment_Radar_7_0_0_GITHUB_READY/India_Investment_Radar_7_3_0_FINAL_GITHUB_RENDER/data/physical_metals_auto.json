@@ -1,0 +1,20 @@
+{
+  "GOLD": {
+    "rate": 67516.57,
+    "unit": "10 grams",
+    "basis": "Global Gold futures \u00d7 USD/INR converted to INR/10g; excludes India retail taxes/premium",
+    "date": "2026-09-07",
+    "updated_at": "2026-09-07T18:41:29",
+    "source": "AUTO MARKET REFERENCE",
+    "status": "FRESH"
+  },
+  "SILVER": {
+    "rate": 81019.88,
+    "unit": "1 kg",
+    "basis": "Global Silver futures \u00d7 USD/INR converted to INR/kg; excludes India retail taxes/premium",
+    "date": "2026-09-07",
+    "updated_at": "2026-09-07T18:41:29",
+    "source": "AUTO MARKET REFERENCE",
+    "status": "FRESH"
+  }
+}

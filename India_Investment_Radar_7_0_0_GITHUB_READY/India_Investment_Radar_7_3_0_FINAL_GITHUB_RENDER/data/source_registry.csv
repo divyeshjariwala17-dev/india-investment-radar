@@ -1,0 +1,25 @@
+DataFamily,Primary,Backup1,Backup2,Critical,FreeFirst,Notes
+NSE Stocks / ETFs,NSE official EOD/common files,Last verified local NSE cache,Manual verified import,YES,YES,EOD technical engine; never fabricate missing sessions.
+BSE / Corporate Cross-check,BSE official public filings/market data where available,NSE official data,Last verified local cache,NO,YES,"Cross-check/fallback, not mandatory for every workflow."
+Corporate Events,NSE official corporate actions/announcements/results,BSE official filings where available,Last verified event cache,YES,YES,BLOCK/REVIEW event gate.
+Mutual Funds NAV,AMFI Complete NAV,MFAPI public fallback,Last verified AMFI/MFAPI cache,YES,YES,Latest published NAV + on-demand history.
+Gold / Silver,Automatic public bullion/FX reference when available,NSE Gold/Silver ETF market proxies,Manual local dealer quote,YES,YES,Physical retail quote can override indicative benchmark.
+Government / RBI,RBI / Government official information,NSE debt/public market information where available,Manual verified official-rate input,YES,YES,"T-Bills, G-Secs, SDL and policy/reference data."
+Post Office / Small Savings,Government/India Post official notifications,Last verified official-rate cache,Manual official-rate input,NO,YES,PPF/NSC/KVP/SCSS/Sukanya/PO products; rate validity is period-based.
+FD / RD,Official bank/SFB/NBFC published rates where configured,Last verified institution quote,Manual current official quote,NO,YES,No universal free authoritative API exists for all institutions.
+IPO / SME IPO,NSE/SEBI official issue data and documents where available,Last verified issue cache,Manual verified RHP/issue inputs,YES,YES,GMP remains optional/unofficial/low weight.
+NPS,NPS Trust official published scheme data where integrated,Last verified NPS data,Manual official input,NO,YES,Market-linked retirement analysis.
+Crypto,Public liquid-market endpoint,Alternative public endpoint when configured,Last verified crypto cache,NO,YES,Confidence reduced on feed disagreement/unavailability.
+Macro / FX,Public market series + official Indian references where integrated,Last verified macro cache,Manual verified context,NO,YES,Context only; core NSE engine can continue if unavailable.
+FII / DII Institutional Flow,NSE official FII/FPI & DII trading activity,Last verified local institutional-flow history,NSDL/CDSL final FPI data manual verification,NO,YES,"NSE same-day figures are provisional; supporting market context, not a standalone signal."
+F&O Participant Positioning,NSE official participant-wise OI/volume and FII derivatives reports,Last verified local derivatives cache,REVIEW REQUIRED,NO,YES,Index futures/options positioning modifies market regime/confidence; never standalone BUY.
+Market Breadth,Calculated from official NSE EOD universe + NSE market statistics where available,Last verified breadth history,REVIEW REQUIRED,NO,YES,"Advance/decline, moving-average participation and highs/lows context."
+Security Delivery,NSE official security-wise delivery/MTO report,Last verified delivery cache,No delivery modifier,NO,YES,Company-level participation confirmation; absence does not fabricate a value.
+Index Valuation,NSE official index P/E P/B dividend-yield reports,Last verified valuation cache,REVIEW REQUIRED,NO,YES,"Valuation is context, not a deterministic timing signal."
+Surveillance,NSE official surveillance/ASM/GSM/ESM indicators where available,Last verified surveillance cache,Official corporate-event review,YES,YES,Serious restrictions can cap/block fresh recommendations.
+FPI Sector Flows,NSDL/CDSL official sector-wise FPI publications,Last verified sector cache,Manual official verification,NO,YES,Sector-allocation/rotation confirmation.
+AMFI SIP / Domestic Flows,AMFI official monthly/SIP publications,Last verified AMFI flow cache,Manual official verification,NO,YES,Domestic flow regime and long-term allocation context.
+Google Archive / Index,Google Drive Desktop synced folder or Google Drive/Sheets API,Local Data Vault + Excel/ZIP export,Supabase full-data persistence,NO,YES,Optional long-term archive/index; secrets are never committed to GitHub.
+Market News Context,Public RSS/news aggregation,NSE official corporate announcements/events,Last verified headline cache,NO,YES,General headlines are context only; official company filings remain the hard safety gate.
+International,Indian-listed NSE/AMFI products first,Public foreign-market reference when available,Last verified cache/manual input,NO,YES,No paid dependency required for core Indian product analysis.
+Hosting / Online,Configured free-tier host,Portable Docker deployment to alternate host,Local Windows app,NO,YES,No automatic paid upgrade; provider migration supported.

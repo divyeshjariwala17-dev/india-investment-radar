@@ -64,7 +64,7 @@ def main():
         except Exception as e:problems.append(f'{p.name}: contract audit {e}')
     try:
         cfg=json.loads((BASE/'config.json').read_text(encoding='utf-8'))
-        if not str(cfg.get('app_version','')).startswith(('7.0.0','7.0.1')):problems.append('wrong version')
+        if not str(cfg.get('app_version','')).startswith('7.2.0'):problems.append('wrong version')
     except Exception as e:problems.append(f'config {e}')
     try:
         src=(BASE/'app.py').read_text(encoding='utf-8');t=ast.parse(src)
@@ -77,7 +77,7 @@ def main():
     except Exception as e:problems.append(f'UI audit {e}')
     try:
         src=(BASE/'app.py').read_text(encoding='utf-8')
-        for required in ('get_dashboard_cache_fast','Full Function Mode','optimizer_result_cache','segment_result_cache','Refresh current values','cached_history','cached_events','cached_mf_universe','cached_data_health','render_page_header','render_data_warning','PAGE_META','📣 Daily Recommendations','run_update_pipeline','build_ui_css','source_runtime_status','daily_money_result'):
+        for required in ('get_dashboard_cache_fast','Full Function Mode','optimizer_result_cache','segment_result_cache','Refresh current values','cached_history','cached_events','cached_mf_universe','cached_data_health','render_page_header','render_data_warning','PAGE_META','📣 Daily Recommendations','run_update_pipeline','build_ui_css','source_runtime_status','daily_money_result','🏦 Market Intelligence','🗄️ Data Vault','refresh_market_intelligence'):
             if required not in src:problems.append(f'performance UX missing: {required}')
         if "tracked=read_log();perf=performance_summary(tracked);segperf=segmented_performance(tracked)" not in src:
             problems.append('accuracy lazy-loading block missing')
@@ -112,6 +112,9 @@ def main():
         from daily_recommendations import stock_rows as daily_stock_rows, overall_action_status
         from ui_config import load_ui_settings, build_css
         from source_manager import load_registry, no_paid_usage_policy
+        from cloud_sync import pull_full_if_needed,pull_full_data,push_full_data,full_status,test_connection
+        from market_intelligence import load_fii_dii,institutional_summary,load_market_news
+        from data_vault import inventory as vault_inventory,stock_excel as vault_stock_excel,category_excel as vault_category_excel
         pf=read_portfolio();template_df();aggregate_holdings(pd.DataFrame(columns=PORTFOLIO_COLUMNS));future_value(10000,12,5);goal_scenarios(1e6,1e5,1e4,5,'MODERATE')
         opt=optimize_money(50000,182,'MODERATE');assert isinstance(opt,dict) and 'allocations' in opt
         analyze_bonds(load_bonds());load_universe();filter_universe('','All','All','All','All','All');load_all_events();load_announcements();get_auto_rate('GOLD',pd.DataFrame())
@@ -119,6 +122,10 @@ def main():
         assert len(oo)>=40, 'master investment universe unexpectedly small'
         assert 'ActiveStatus' in oo.columns and 'DataConfidence' in oo.columns
         assert not load_registry().empty and no_paid_usage_policy().get('SpendLimit₹')==0
+        assert callable(pull_full_if_needed) and callable(pull_full_data) and callable(push_full_data) and isinstance(full_status(BASE/'data'),dict)
+        assert isinstance(load_fii_dii(),pd.DataFrame) and isinstance(institutional_summary(),dict) and isinstance(load_market_news(),pd.DataFrame)
+        assert isinstance(vault_inventory(BASE/'data'),pd.DataFrame)
+        assert len(vault_category_excel({'Test':pd.DataFrame([{'a':1}])}))>100
         uis=load_ui_settings();assert 'radar-dynamic-theme' in build_css(uis)
         n=260;dates=pd.bdate_range('2025-01-01',periods=n);rows=[]
         for j,sym in enumerate(['AAA','BBB','CCC']):
@@ -135,7 +142,7 @@ def main():
         print('VERIFY FAILED')
         for x in problems:print(' -',x)
         return 1
-    print('VERIFY PASS — INDIA INVESTMENT RADAR 7.0.1 FULL RELIABILITY PREMIUM CLOUD-PERSISTENT')
+    print('VERIFY PASS — INDIA INVESTMENT RADAR 7.2.0 FINAL MARKET INTELLIGENCE + DATA VAULT')
     print(f'Python modules checked: {len(files)}')
     print('Undefined globals / local imports / required arguments: PASS')
     print('Premium navigation / Daily Recommendations / no-Delta UI audit: PASS')

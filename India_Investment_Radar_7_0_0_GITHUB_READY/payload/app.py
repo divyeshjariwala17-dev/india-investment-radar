@@ -30,6 +30,8 @@ from cross_asset import build as build_cross_asset, save as save_cross_asset, lo
 from macro_intelligence import refresh as refresh_macro, load as load_macro, meta as macro_meta, india_context
 from ipo_engine import load as load_ipos, save as save_ipos, analyze as analyze_ipos, template as ipo_template, refresh_nse_current as refresh_nse_ipos, normalize as normalize_ipos
 from investment_options import load as load_investment_options, save as save_investment_options, rank as rank_investment_options
+from deposit_rates import load as load_fd_rates, refresh as refresh_fd_rates
+from small_savings import load as load_small_savings, refresh as refresh_small_savings
 from money_optimizer import horizon_days_from_choice, human_horizon, auto_risk, required_return_for_target, collect_candidates, score_candidates, build_plan, build_why_not, universal_explanation, portfolio_exposure, save_plan, load_plans, segment_candidates
 from data_center import build_data_health, action_needed as data_action_needed
 from portfolio_analytics import portfolio_health
@@ -37,11 +39,19 @@ from daily_decision import build_daily_actions, headline as daily_headline
 from daily_recommendations import stock_rows as daily_stock_rows, mf_rows as daily_mf_rows, fixed_rows as daily_fixed_rows, ipo_rows as daily_ipo_rows, overall_action_status as daily_action_status
 from ui_config import load_ui_settings, save_ui_settings, reset_ui_settings, save_background, clear_background, build_css as build_ui_css, PRESETS as UI_PRESETS
 from source_manager import load_registry as load_source_registry, save_registry as save_source_registry, runtime_status as source_runtime_status, no_paid_usage_policy, record_success as source_success, record_failure as source_failure
-from cloud_sync import pull_once as cloud_pull_once, push_changed as cloud_push_changed, status as cloud_status
+from cloud_sync import pull_once as cloud_pull_once, push_changed as cloud_push_changed, status as cloud_status, pull_full_if_needed as cloud_pull_full_if_needed, pull_full_data as cloud_pull_full_data, push_full_data as cloud_push_full_data, full_status as cloud_full_status, test_connection as cloud_test_connection
+from market_intelligence import refresh_all as refresh_market_intelligence, load_fii_dii, institutional_summary, load_market_news, refresh_stock_news, load_stock_news
+from data_vault import inventory as data_vault_inventory, stock_excel as data_vault_stock_excel, category_excel as data_vault_category_excel, complete_archive as data_vault_complete_archive
 
 BASE=Path(__file__).resolve().parent
-cloud_pull_once(BASE/'data')
 CFG=json.loads((BASE/'config.json').read_text(encoding='utf-8'))
+cloud_pull_once(BASE/'data')
+# On ephemeral cloud hosts, automatically restore the last verified full market-data snapshot
+# before deciding that First Setup is required. On a ready PC this is a no-op.
+try:
+    cloud_pull_full_if_needed(BASE/'data',min_sessions=CFG.get('min_history_for_radar',90))
+except Exception:
+    pass
 UI_SETTINGS=load_ui_settings()
 SEED=BASE/'fundamentals_seed.csv'
 LOG=BASE/'data'/'recommendation_history.csv'
@@ -123,10 +133,10 @@ div[data-baseweb="select"]>div,div[data-baseweb="input"]>div{border-radius:10px!
 NAV_GROUPS={
     '📣 Today':['📣 Daily Recommendations','🏠 Home'],
     '💰 Plan & Invest':['💰 Best Use of My Money','🎯 Go by Segment','🔥 ACTION BOARD','🚀 IPO / New Issues','🧭 Other Investments'],
-    '📈 Markets':['🌍 Market Outlook','⚡ Stocks','🪙 ETFs','💰 Mutual Funds','🥇 Gold / Silver','₿ Crypto','🏦 Fixed Income','📅 Corporate Events'],
+    '📈 Markets':['🌍 Market Outlook','🏦 Market Intelligence','⚡ Stocks','🪙 ETFs','💰 Mutual Funds','🥇 Gold / Silver','₿ Crypto','🏦 Fixed Income','📅 Corporate Events'],
     '💼 Portfolio':['💼 My Portfolio','🧮 Position Size','🔔 Alerts'],
     '🧠 Research':['📊 Accuracy','🧪 Validation'],
-    '⚙️ System':['🧠 Auto Data Center','🩺 System Check','⚙️ Settings'],
+    '⚙️ System':['🧠 Auto Data Center','🗄️ Data Vault','🩺 System Check','⚙️ Settings'],
 }
 
 PAGE_META={
@@ -137,7 +147,8 @@ PAGE_META={
     '🔥 ACTION BOARD':('PLAN & INVEST','Action Board','See the strongest qualified opportunities already calculated in the saved daily dashboard.'),
     '🚀 IPO / New Issues':('PLAN & INVEST','IPO / New Issues','Evaluate current issues using valuation, growth, issue structure, subscription, risk and separate listing/long-term views.'),
     '🧭 Other Investments':('PLAN & INVEST','Other Investments','Compare government savings, NPS, FD/RD, REIT/InvIT, international and other products by goal, duration, liquidity and risk.'),
-    '🌍 Market Outlook':('MARKETS','Market Outlook','Read the current market regime and evidence before acting on individual opportunities.'),
+    '🌍 Market Outlook':('MARKETS','Market Outlook','Read the current market regime, institutional flow and macro evidence before acting on individual opportunities.'),
+    '🏦 Market Intelligence':('MARKETS','Market Intelligence','FII/FPI & DII flows, market breadth, India VIX/macro context and public-news context in one evidence screen.'),
     '⚡ Stocks':('MARKETS','Stocks — All NSE','Search and analyze available NSE EQ stocks with full technical, fundamental, entry, risk and validation evidence.'),
     '🪙 ETFs':('MARKETS','ETFs','Review listed ETF opportunities with the same disciplined entry, risk and evidence framework.'),
     '💰 Mutual Funds':('MARKETS','Mutual Funds','Search the current AMFI universe, filter by category/plan/option and analyze exact schemes with return and risk evidence.'),
@@ -151,6 +162,7 @@ PAGE_META={
     '📊 Accuracy':('RESEARCH','Accuracy','Measure resolved recommendation outcomes, win rate and segment-level reliability instead of relying on labels alone.'),
     '🧪 Validation':('RESEARCH','Validation','Build and inspect backtest and walk-forward evidence used to keep confidence conservative.'),
     '🧠 Auto Data Center':('SYSTEM','Auto Data Center','See source freshness, trust, fallbacks and exactly which data needs attention before you rely on a recommendation.'),
+    '🗄️ Data Vault':('SYSTEM','Data Vault','Search historical data, export an individual stock to Excel, download reference tables and create a complete verified data archive.'),
     '🩺 System Check':('SYSTEM','System Check','Run diagnostics, backup/restore checks and confirm the local installation is healthy.'),
     '⚙️ Settings':('SYSTEM','Settings','Control optional providers and review the permanent recommendation rules without changing normal day-to-day operation.'),
 }
@@ -159,7 +171,8 @@ DATA_PAGE_SOURCES={
     '📣 Daily Recommendations':['NSE price history','Corporate events','Corporate announcements','Mutual Fund universe / NAV','Physical Gold/Silver auto reference','IPO / new issues'],
     '🏠 Home':['NSE price history','Corporate events','Mutual Fund universe / NAV','Macro context'],
     '🔥 ACTION BOARD':['NSE price history','Corporate events','Corporate announcements'],
-    '🌍 Market Outlook':['NSE price history','Macro context'],
+    '🌍 Market Outlook':['NSE price history','Macro context','FII / DII institutional flow','Market news context'],
+    '🏦 Market Intelligence':['NSE price history','Macro context','FII / DII institutional flow','Market news context'],
     '⚡ Stocks':['NSE price history','Corporate events','Corporate announcements','Auto fundamentals'],
     '🪙 ETFs':['NSE price history'],
     '💰 Mutual Funds':['Mutual Fund universe / NAV','MF deep histories'],
@@ -357,21 +370,24 @@ def run_update_pipeline(full=False):
     Critical failures are reported instead of leaving the UI looking frozen. Existing verified cache is preserved.
     """
     steps=[]
-    target=max(CFG['history_sessions'],cache_status().get('sessions',0)) if not full else CFG['history_sessions']
+    target=CFG['history_sessions']
     steps.append(('NSE price history','NSE / market history',lambda cb:update_history(target_sessions=target,lookback_calendar_days=650,status_cb=cb)))
     steps.append(('Corporate events','Corporate Events',lambda cb:refresh_all_events(CFG.get('corporate_events_back_days',45),CFG.get('corporate_events_forward_days',120),status_cb=cb)))
     steps.append(('Corporate announcements','Corporate Announcements',lambda cb:refresh_announcements(CFG.get('news_lookback_days',10),status_cb=cb)))
     steps.append(('Mutual Fund universe / NAV','Mutual Funds — AMFI universe',lambda cb:refresh_mf_universe(status_cb=cb)))
     steps.append(('Mutual Fund selected histories','Mutual Funds — ranked/history cache',lambda cb:refresh_mf(CFG['mutual_fund_searches'],status_cb=cb)))
     steps.append(('Crypto prices','Crypto market cache',lambda cb:refresh_crypto(CFG.get('crypto_symbols'),status_cb=cb)))
+    steps.append(('FII / DII institutional flow','Institutional Flow + Market News',lambda cb:refresh_market_intelligence(status_cb=cb,news_topics=CFG.get('market_news_topics'))))
     def _macro(cb):
         macro_now=refresh_macro(status_cb=cb)
         if macro_now is not None and not macro_now.empty:refresh_auto_rates(macro_now)
         return {'ok':True,'message':'Macro and Gold/Silver automatic reference checked.'}
     steps.append(('Macro / Gold Silver','Macro + Gold/Silver reference',_macro))
     steps.append(('IPO / new issues','IPO / SME IPO current issues',lambda cb:refresh_nse_ipos(status_cb=cb)))
+    steps.append(('Bank FD / deposit directory','FD / RD bank rates',lambda cb:refresh_fd_rates(status_cb=cb)))
+    steps.append(('Post Office / small savings','Post Office / Govt small-savings rates',lambda cb:refresh_small_savings(status_cb=cb)))
 
-    total=len(steps)+2
+    total=len(steps)+2+(1 if cloud_status().get('enabled') else 0)
     prog=st.progress(0,text='Preparing update...')
     detail=st.empty();logbox=st.container()
     rows=[]
@@ -416,6 +432,21 @@ def run_update_pipeline(full=False):
     except Exception as e:
         ok=False;message=f'{type(e).__name__}: {e}'
     rows.append({'Step':'Portfolio current values','Status':'PASS' if ok else 'WARNING','Seconds':round((pd.Timestamp.now()-t0).total_seconds(),1),'Detail':message})
+
+    # Persist both personal state and the FULL verified market/calculation dataset when Supabase is configured.
+    # This is essential on free cloud hosts such as Render because their local filesystem is ephemeral.
+    if cloud_status().get('enabled'):
+        idx+=1
+        prog.progress(int((idx-1)/total*100),text=f'{idx}/{total} — Saving verified data to Supabase')
+        t0=pd.Timestamp.now(); ok=True
+        try:
+            cloud_push_changed(BASE/'data')
+            cres=cloud_push_full_data(BASE/'data',status_cb=lambda x:detail.caption('☁️ '+str(x)))
+            ok=bool(cres.get('ok',False));message=str(cres.get('message','Cloud data sync complete.'))
+        except Exception as e:
+            ok=False;message=f'{type(e).__name__}: {e}'
+        rows.append({'Step':'Cloud full-data persistence','Status':'PASS' if ok else 'WARNING','Seconds':round((pd.Timestamp.now()-t0).total_seconds(),1),'Detail':message})
+
     prog.progress(100,text='Update cycle complete')
     total_sec=(pd.Timestamp.now()-started).total_seconds()
     report=pd.DataFrame(rows)
@@ -464,9 +495,31 @@ with st.sidebar:
         st.caption('Not needed for normal daily use.')
         if st.button('⚡ Rebuild saved dashboard',use_container_width=True):
             box=st.empty();recalc_and_save(lambda x:box.caption(x));clear_runtime_caches();box.success('Dashboard rebuilt.');cloud_rerun()
-        if st.button('📥 First Setup / Full Data',use_container_width=True):
+        if st.button('📥 Full Data Setup / Repair',use_container_width=True):
+            if cloud_status().get('enabled'):
+                box=st.empty();box.caption('☁️ Checking Supabase for an existing full-data snapshot...')
+                try:
+                    rr=cloud_pull_full_data(BASE/'data',force=False,status_cb=lambda x:box.caption('☁️ '+str(x)),min_sessions=CFG.get('min_history_for_radar',90))
+                    box.caption(str(rr.get('message','')))
+                except Exception as e:box.warning('Cloud restore check skipped: '+str(e))
             run_update_pipeline(full=True)
             st.cache_data.clear();cloud_rerun()
+        st.divider()
+        st.caption('☁️ Full Data Cloud Sync — keeps downloaded market data available after cloud restart and shares it with your PC.')
+        _cs=cloud_status(); _cfs=cloud_full_status(BASE/'data')
+        if _cs.get('enabled'):
+            st.caption('Cloud: CONNECTED • '+str(_cfs.get('message') or _cs.get('full_message') or _cs.get('message','')))
+            csa,csb=st.columns(2)
+            with csa:
+                if st.button('☁️ Save FULL data',use_container_width=True):
+                    b=st.empty();r=cloud_push_full_data(BASE/'data',status_cb=lambda x:b.caption('☁️ '+str(x)));
+                    (b.success if r.get('ok') else b.warning)(r.get('message','Cloud sync finished.'))
+            with csb:
+                if st.button('☁️ Restore FULL data',use_container_width=True):
+                    b=st.empty();r=cloud_pull_full_data(BASE/'data',force=True,status_cb=lambda x:b.caption('☁️ '+str(x)),min_sessions=CFG.get('min_history_for_radar',90));
+                    (b.success if r.get('ok') else b.warning)(r.get('message','Cloud restore finished.'));st.cache_data.clear();invalidate_fast_cache()
+        else:
+            st.caption('Cloud: NOT CONFIGURED. Online Render can still run, but downloaded files will not survive a restart until Supabase is connected.')
         if st.button('🧠 Build all validation',use_container_width=True):
             box=st.empty();h=load_history(max_sessions=CFG['history_sessions'])
             with st.spinner('Building validation evidence...'):
@@ -475,25 +528,34 @@ with st.sidebar:
     st.caption('⚡ Full Function Mode — all modules available; heavy work runs only when requested.')
 
 # Apply the saved theme/background after navigation is known. Analysis pages default to a cleaner background unless enabled in Settings.
-_analysis_pages={'⚡ Stocks','🪙 ETFs','💰 Mutual Funds','🥇 Gold / Silver','₿ Crypto','🏦 Fixed Income','📊 Accuracy','🧪 Validation','🧠 Auto Data Center','🩺 System Check'}
+_analysis_pages={'🏦 Market Intelligence','⚡ Stocks','🪙 ETFs','💰 Mutual Funds','🥇 Gold / Silver','₿ Crypto','🏦 Fixed Income','📊 Accuracy','🧪 Validation','🧠 Auto Data Center','🗄️ Data Vault','🩺 System Check'}
 st.markdown(build_ui_css(UI_SETTINGS,analysis_page=active_page in _analysis_pages),unsafe_allow_html=True)
 
-if status['sessions']<CFG['min_history_for_radar']:
-    st.warning('First setup is incomplete. Click FIRST SETUP / FULL DATA on the left.')
+_core_required_pages={'📣 Daily Recommendations','🏠 Home','💰 Best Use of My Money','🎯 Go by Segment','🔥 ACTION BOARD','🌍 Market Outlook','🏦 Market Intelligence','⚡ Stocks','🪙 ETFs','🥇 Gold / Silver','₿ Crypto','💼 My Portfolio','🧮 Position Size','🔔 Alerts','📊 Accuracy','🧪 Validation','📅 Corporate Events'}
+_core_ready=status['sessions']>=CFG['min_history_for_radar']
+if not _core_ready and active_page in _core_required_pages:
+    st.warning('Core market data is not ready yet. Use **Maintenance → Full Data Setup / Repair**. If Supabase already has a full-data snapshot, Radar restores it first instead of downloading everything again.')
+    cst=cloud_status();cfs=cloud_full_status(BASE/'data')
+    st.caption(('☁️ '+str(cfs.get('message') or cst.get('message',''))) if cst.get('enabled') else '☁️ Supabase full-data sync is not configured on this device.')
     st.dataframe(run_diagnostics(),use_container_width=True,hide_index=True);st.stop()
 
 cache=get_dashboard_cache_fast()
-if cache is None:
-    st.info('Your NSE data is ready. Click **REBUILD DASHBOARD ONLY** once. After that the app will open fast from saved results.')
+if cache is None and active_page in _core_required_pages:
+    st.info('NSE history exists but the saved recommendation dashboard is missing. Use **Rebuild saved dashboard** once.')
     st.dataframe(run_diagnostics(),use_container_width=True,hide_index=True);st.stop()
 
-radar=cache['radar'];breadth=cache['breadth'];mout=cache['market_outlook'];proxy=cache['market_proxy'];mf=cache['mf'];mfd=cache['mf_details'];bonds=cache['bonds'];meta=cache['meta']
-if radar.empty:
-    st.error('Saved dashboard contains no stock radar. Run REBUILD DASHBOARD ONLY.');st.stop()
-
-reg=str(radar.MarketRegime.iloc[0]);ico={'BULLISH':'🟢','CAUTIOUS':'🟡','WEAK':'🔴'}.get(reg,'⚪')
-total_symbols=int(radar.Symbol.nunique())
-eligible_symbols=int(radar.loc[radar.Eligibility.eq('ELIGIBLE'),'Symbol'].nunique()) if 'Eligibility' in radar.columns else total_symbols
+# Independent pages (Mutual Funds, Fixed Income, IPO, Other Investments, Data Center, System Check, Settings)
+# remain usable even before NSE First Setup completes.
+if cache is None:
+    cache={'radar':pd.DataFrame(),'breadth':{},'market_outlook':pd.DataFrame(),'market_proxy':pd.DataFrame(),'mf':pd.DataFrame(),'mf_details':{},'bonds':pd.DataFrame(),'meta':{}}
+radar=cache.get('radar',pd.DataFrame());breadth=cache.get('breadth',{});mout=cache.get('market_outlook',pd.DataFrame());proxy=cache.get('market_proxy',pd.DataFrame());mf=cache.get('mf',pd.DataFrame());mfd=cache.get('mf_details',{});bonds=cache.get('bonds',pd.DataFrame());meta=cache.get('meta',{})
+if radar is not None and not radar.empty:
+    reg=str(radar.MarketRegime.iloc[0]) if 'MarketRegime' in radar.columns else 'UNKNOWN'
+    total_symbols=int(radar.Symbol.nunique()) if 'Symbol' in radar.columns else 0
+    eligible_symbols=int(radar.loc[radar.Eligibility.eq('ELIGIBLE'),'Symbol'].nunique()) if 'Eligibility' in radar.columns and 'Symbol' in radar.columns else total_symbols
+else:
+    reg='SETUP REQUIRED';total_symbols=0;eligible_symbols=0
+ico={'BULLISH':'🟢','CAUTIOUS':'🟡','WEAK':'🔴'}.get(reg,'⚪')
 
 if active_page=='🏠 Home':
     st.markdown(f'''<div class="premium-hero"><div class="premium-kicker">INDIA INVESTMENT RADAR</div><div class="premium-title">All functions. Fast when you need them. Evidence before action.</div><div class="premium-sub">One permanent workspace for Stocks, Mutual Funds, Gold/Silver, Fixed Income, IPOs, Crypto, portfolio decisions, validation and data health. Heavy calculations run on demand or during Daily Update; saved evidence opens quickly.</div><span class="premium-pill">{CFG.get('app_version','SMART')}</span><span class="premium-pill">Full Function Mode</span><span class="premium-pill">On-demand Heavy Work</span><span class="premium-pill">Freshness & Validation Gates</span></div>''',unsafe_allow_html=True)
@@ -504,6 +566,11 @@ render_data_warning(active_page)
 if active_page in ('📣 Daily Recommendations','🏠 Home','🔥 ACTION BOARD','🌍 Market Outlook'):
     c1,c2,c3,c4,c5,c6,c7=st.columns(7)
     c1.metric('Market',f'{ico} {reg}');c2.metric('Above EMA21',f"{breadth.get('pct_above_ema21',0):.1f}%");c3.metric('Above EMA50',f"{breadth.get('pct_above_ema50',0):.1f}%");c4.metric('Advancers',f"{breadth.get('pct_advancers',0):.1f}%");c5.metric('All NSE EQ',f'{total_symbols:,}');c6.metric('Eligible',f'{eligible_symbols:,}');c7.metric('Data Date',str(meta.get('data_date','')))
+    _inst=institutional_summary()
+    if _inst.get('Bias')!='UNAVAILABLE':
+        i1,i2,i3,i4=st.columns(4)
+        i1.metric('Institutional Flow',_inst.get('Bias','—'));i2.metric('FII/FPI latest',f"₹{_inst.get('FIINet₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('FIINet₹Cr',np.nan)) else '—');i3.metric('DII latest',f"₹{_inst.get('DIINet₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('DIINet₹Cr',np.nan)) else '—');i4.metric('FII 5 sessions',f"₹{_inst.get('FII5D₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('FII5D₹Cr',np.nan)) else '—')
+        st.caption('NSE same-day FII/FPI & DII cash-market data is provisional. Institutional flow is supporting context, not a standalone Buy/Sell trigger.')
 
 if active_page=='📣 Daily Recommendations':
     try:_ddh,_dscore=cached_data_health()
@@ -551,6 +618,15 @@ if active_page=='📣 Daily Recommendations':
         st.markdown('### 🏦 Fixed Income')
         if _fixed.empty:st.info('No verified current Yield/YTM is available for a qualified Fixed-Income call. Enter/refresh exact yields in Fixed Income.')
         else:st.dataframe(_fixed,use_container_width=True,hide_index=True)
+
+    st.markdown('### 🏦 FD / Post Office / Government Savings')
+    try:
+        _sopts=load_investment_options();_sr=rank_investment_options(_sopts,100000,5,'LOW')
+        _sr=_sr[_sr.Category.astype(str).isin(['BANK FD','FIXED RETURN','GOVT SAVINGS'])].copy()
+        _show=[c for c in ['Option','Provider/Instrument','RateOrExpectedReturn%','TenureYears','LockInYears','RateDate','DataConfidence','Fit'] if c in _sr.columns]
+        if _sr.empty:st.info('No current verified deposit/small-savings rows are ready yet. Run Daily Update.')
+        else:st.dataframe(_sr[_show].head(10),use_container_width=True,hide_index=True)
+    except Exception as _e:st.info('Deposit / small-savings directory is not ready yet: '+str(_e))
 
     cMET,cIPO=st.columns(2)
     with cMET:
@@ -872,6 +948,11 @@ if active_page=='🌍 Market Outlook':
         st.dataframe(macro,use_container_width=True,hide_index=True)
         if mctx.get('Reasons'):st.caption('Macro reasons: '+' • '.join(mctx['Reasons']))
         st.caption('Optional context from Nifty/Bank Nifty, USD/INR, crude and major global markets. If the public macro feed is unavailable, the core NSE radar continues normally.')
+    _inst=institutional_summary();_news=load_market_news()
+    if _inst.get('Bias')!='UNAVAILABLE':
+        a,b,c,d=st.columns(4);a.metric('Institutional bias',_inst.get('Bias'));b.metric('FII 5D',f"₹{_inst.get('FII5D₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('FII5D₹Cr',np.nan)) else '—');c.metric('DII 5D',f"₹{_inst.get('DII5D₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('DII5D₹Cr',np.nan)) else '—');d.metric('Institutional score',f"{_inst.get('Score',0):.0f}/100" if pd.notna(_inst.get('Score',np.nan)) else '—')
+    if _news is not None and not _news.empty:
+        with st.expander('Latest public market-news context',expanded=False):st.dataframe(_news[[c for c in ['Published','Title','Source','Risk','Query'] if c in _news.columns]].head(20),use_container_width=True,hide_index=True)
     st.warning('Probability ranges from historically similar market states — not guaranteed forecasts.')
     if mout.empty:st.info('Not enough history for market outlook.')
     else:
@@ -879,6 +960,30 @@ if active_page=='🌍 Market Outlook':
         for _,r in mout.iterrows():
             st.markdown(f"**{r.Horizon}: {r.Bias}** • Positive {r['ProbabilityPositive%']}% • Median {r['MedianReturn%']:+.2f}% • Range {r['RangeLow%']:+.2f}% to {r['RangeHigh%']:+.2f}% • {r.Confidence}")
     if not proxy.empty and 'Date' in proxy:st.line_chart(proxy.tail(160).set_index('Date')[['Proxy','EMA21','EMA50']])
+
+if active_page=='🏦 Market Intelligence':
+    st.caption('Institutional flow and public news are supporting evidence. Official exchange/company filings remain the primary event-safety source for individual-stock recommendations.')
+    _flows=load_fii_dii();_inst=institutional_summary(_flows);_news=load_market_news();_macro=load_macro()
+    a,b,c,d,e=st.columns(5)
+    a.metric('Institutional Bias',_inst.get('Bias','UNAVAILABLE'))
+    b.metric('FII/FPI Latest',f"₹{_inst.get('FIINet₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('FIINet₹Cr',np.nan)) else '—')
+    c.metric('DII Latest',f"₹{_inst.get('DIINet₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('DIINet₹Cr',np.nan)) else '—')
+    d.metric('FII 5D',f"₹{_inst.get('FII5D₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('FII5D₹Cr',np.nan)) else '—')
+    e.metric('FII 20D',f"₹{_inst.get('FII20D₹Cr',0):+,.0f} Cr" if pd.notna(_inst.get('FII20D₹Cr',np.nan)) else '—')
+    st.markdown('### FII/FPI & DII cash-market history')
+    if _flows.empty:st.info('No institutional-flow cache yet. Run DAILY UPDATE.')
+    else:st.dataframe(_flows.sort_values('Date',ascending=False).head(60),use_container_width=True,hide_index=True)
+    st.markdown('### Market breadth')
+    b1,b2,b3=st.columns(3);b1.metric('Above EMA21',f"{breadth.get('pct_above_ema21',0):.1f}%");b2.metric('Above EMA50',f"{breadth.get('pct_above_ema50',0):.1f}%");b3.metric('Advancers',f"{breadth.get('pct_advancers',0):.1f}%")
+    if not _macro.empty:
+        st.markdown('### Macro / global context');st.dataframe(_macro,use_container_width=True,hide_index=True)
+    st.markdown('### Public market-news context')
+    if _news.empty:st.info('No public-news cache yet. Run DAILY UPDATE.')
+    else:
+        risk=st.multiselect('News filter',['RISK','NEUTRAL','POSITIVE'],default=['RISK','NEUTRAL','POSITIVE'])
+        _nv=_news[_news.Risk.astype(str).isin(risk)] if 'Risk' in _news.columns else _news
+        st.dataframe(_nv[[c for c in ['Published','Title','Source','Risk','Query'] if c in _nv.columns]].head(80),use_container_width=True,hide_index=True)
+    st.info('For critical company-specific decisions, Radar uses official NSE announcements/corporate events as the hard gate. General web-news headlines are context only and cannot create a Strong Buy by themselves.')
 
 if active_page=='⚡ Stocks':
     sub=st.tabs(['Today\'s Ranking — ALL NSE','Qualified Picks','Full Stock Card'])
@@ -976,6 +1081,12 @@ if active_page=='⚡ Stocks':
                 chart=load_chart(sym)
                 if not chart.empty:st.line_chart(chart.set_index('Date')[[c for c in ['Close','EMA10','EMA21','EMA50'] if c in chart.columns]])
                 else:st.caption('Detailed chart cache is stored mainly for qualified/high-priority stocks to keep the app fast. The decision card above is still calculated for this symbol.')
+                st.markdown('#### Public News Context')
+                if st.button('🔄 Refresh public news for '+sym,key='stock_news_'+sym):
+                    _nb=st.empty();_nr=refresh_stock_news(sym,str(r.Company),status_cb=lambda x:_nb.caption(str(x)));(_nb.success if _nr.get('ok') else _nb.warning)(_nr.get('message',''))
+                _sn=load_stock_news(sym)
+                if _sn is not None and not _sn.empty:st.dataframe(_sn[[c for c in ['Published','Title','Source','Risk'] if c in _sn.columns]].head(20),use_container_width=True,hide_index=True)
+                else:st.caption('No cached public-news context for this stock. Official NSE announcement/event gates above remain active.')
 
 if active_page=='🧮 Position Size':
     capital=st.number_input('Total trading/investment capital ₹',min_value=1000.0,value=500000.0,step=10000.0)
@@ -1465,15 +1576,22 @@ if active_page=='💰 Mutual Funds':
         mf_group=f2.selectbox('Broad category',groups,key='mf_group')
         houses=['All']+sorted([x for x in u.FundHouse.dropna().astype(str).unique() if x])
         mf_house=f3.selectbox('Fund house / AMC',houses,key='mf_house')
-        mf_plan=f4.selectbox('Plan',['All','Direct','Regular','Unspecified'],index=1,key='mf_plan')
-        mf_option=f5.selectbox('Option',['All','Growth','IDCW','Dividend/IDCW','Other/Unspecified'],index=1,key='mf_option')
+        mf_plan=f4.selectbox('Plan',['All','Direct','Regular','Unspecified'],index=0,key='mf_plan')
+        mf_option=f5.selectbox('Option',['All','Growth','IDCW','Dividend/IDCW','Other/Unspecified'],index=0,key='mf_option')
         # Detailed AMFI category remains available but hidden behind a simple select.
         cats=['All']+sorted([x for x in u.Category.dropna().astype(str).unique() if x and (mf_group=='All' or x in u[u.CategoryGroup.eq(mf_group)].Category.astype(str).unique())])
         mf_cat=st.selectbox('Specific AMFI category — optional',cats,key='mf_exact_cat')
         fu=filter_mf_universe(mf_search,mf_house,mf_cat,mf_group,mf_plan,mf_option)
-        st.caption(f'{len(fu):,} matching scheme/plan rows')
+        st.caption(f'{len(fu):,} matching scheme/plan rows — complete AMFI universe, not a top-fund sample.')
         cols=[c for c in ['SchemeCode','SchemeName','FundHouse','CategoryGroup','Category','Plan','Option','NAV','NAVDate','Source'] if c in fu.columns]
-        st.dataframe(fu[cols].head(1000),use_container_width=True,hide_index=True)
+        if not fu.empty:
+            pg1,pg2=st.columns([1,1])
+            mf_page_size=pg1.selectbox('Rows per page',[100,250,500,1000],index=1,key='mf_page_size')
+            mf_pages=max(1,int(np.ceil(len(fu)/mf_page_size)))
+            mf_page=pg2.number_input('Page',min_value=1,max_value=mf_pages,value=1,step=1,key='mf_page')
+            _start=(int(mf_page)-1)*int(mf_page_size);_end=min(_start+int(mf_page_size),len(fu))
+            st.caption(f'Showing {_start+1:,}–{_end:,} of {len(fu):,} matching rows')
+            st.dataframe(fu.iloc[_start:_end][cols],use_container_width=True,hide_index=True)
         if not fu.empty:
             labels=(fu.SchemeName.astype(str)+'  ['+fu.SchemeCode.astype(str)+']').tolist()
             chosen=st.selectbox('Exact Mutual Fund product',labels,key='mf_exact_product')
@@ -1620,34 +1738,67 @@ if active_page=='🚀 IPO / New Issues':
             except Exception as e:st.error('IPO import failed: '+str(e))
 
 if active_page=='🧭 Other Investments':
-    st.caption('Compare important India investment categories that do not fit a stock-style BUY/SELL model. Current rates/returns are editable because scheme rates and product terms can change.')
+    st.caption('Complete non-stock investment directory: exact bank FDs where current public rates are available, all RBI-listed bank providers kept visible even when a rate needs verification, and current Post Office / Government small-savings rates.')
     opts=load_investment_options()
-    a,b,c=st.columns(3)
-    amount=a.number_input('Amount to invest ₹',min_value=1000.0,value=100000.0,step=10000.0,key='other_amt')
-    horizon=b.selectbox('Horizon',['6 Months','1 Year','3 Years','5 Years','10 Years','15+ Years'],index=3,key='other_horizon')
-    years={'6 Months':.5,'1 Year':1,'3 Years':3,'5 Years':5,'10 Years':10,'15+ Years':15}[horizon]
-    risk=c.selectbox('Risk profile',['LOW','MODERATE','HIGH'],index=1,key='other_risk')
-    ranked=rank_investment_options(opts,amount,years,risk)
-    st.markdown('### Best fit for the selected amount / horizon / risk')
-    st.dataframe(ranked[[c for c in ['Option','Category','Provider/Instrument','RateOrExpectedReturn%','TenureYears','LockInYears','Risk','Liquidity','TaxEfficiency','MinInvestment₹','ActiveStatus','RateDate','DataConfidence','FitScore','Fit','Reason'] if c in ranked.columns]],use_container_width=True,hide_index=True,height=560)
-    st.info('A high Fit Score means the product characteristics fit the profile you entered. It is not a promise that the product will outperform stocks, funds or gold.')
-    st.markdown('### Update current rates / product details')
-    edit=st.data_editor(opts,use_container_width=True,num_rows='dynamic',height=440,key='other_options_editor')
-    if st.button('💾 Save Investment Option Inputs'):
-        save_investment_options(edit);st.success('Saved locally.');cloud_rerun()
-    st.markdown('''#### Permanent Master Investment Universe
+    tab_best,tab_fd,tab_po,tab_all=st.tabs(['🏆 Best Fit','🏦 FD / RD Directory','🏤 Post Office / Govt Savings','📚 Full Other-Investment Universe'])
+    with tab_best:
+        a,b,c=st.columns(3)
+        amount=a.number_input('Amount to invest ₹',min_value=1000.0,value=100000.0,step=10000.0,key='other_amt')
+        horizon=b.selectbox('Horizon',['6 Months','1 Year','3 Years','5 Years','10 Years','15+ Years'],index=3,key='other_horizon')
+        years={'6 Months':.5,'1 Year':1,'3 Years':3,'5 Years':5,'10 Years':10,'15+ Years':15}[horizon]
+        risk=c.selectbox('Risk profile',['LOW','MODERATE','HIGH'],index=1,key='other_risk')
+        ranked=rank_investment_options(opts,amount,years,risk)
+        st.markdown('### Best fit for the selected amount / horizon / risk')
+        st.dataframe(ranked[[c for c in ['Option','Category','Provider/Instrument','RateOrExpectedReturn%','TenureYears','LockInYears','Risk','Liquidity','TaxEfficiency','MinInvestment₹','ActiveStatus','RateDate','DataConfidence','FitScore','Fit','Reason'] if c in ranked.columns]].head(300),use_container_width=True,hide_index=True,height=560)
+        st.info('A high Fit Score means the product characteristics fit the profile you entered. It is not a promise of future performance. Exact FD rates must still be checked on the chosen bank page before booking.')
+    with tab_fd:
+        fd=load_fd_rates()
+        x1,x2,x3=st.columns(3)
+        q=x1.text_input('Search bank',key='fd_search')
+        types=['All']+sorted(fd.BankType.dropna().astype(str).unique().tolist()) if not fd.empty else ['All']
+        typ=x2.selectbox('Bank type',types,key='fd_type')
+        prod=x3.selectbox('Tenure',['All','Highest published slab','1 Year','3 Years','5 Years'],key='fd_tenure')
+        f=fd.copy()
+        if q:f=f[f.Provider.astype(str).str.contains(re.escape(q),case=False,regex=True,na=False)]
+        if typ!='All':f=f[f.BankType.astype(str).eq(typ)]
+        if prod!='All':f=f[f.Product.astype(str).eq(prod)]
+        if not f.empty:
+            f['GeneralRate%']=pd.to_numeric(f['GeneralRate%'],errors='coerce')
+            f=f.sort_values(['GeneralRate%','Provider'],ascending=[False,True],na_position='last')
+        c1,c2,c3=st.columns(3)
+        c1.metric('Bank/tenure rows',f'{len(f):,}')
+        c2.metric('Rates available',f"{int(pd.to_numeric(f['GeneralRate%'],errors='coerce').notna().sum()) if not f.empty else 0:,}")
+        c3.metric('Providers',f"{f.Provider.nunique() if not f.empty else 0:,}")
+        if st.button('🔄 Refresh FD directory / public comparison rates',use_container_width=True,key='refresh_fd_directory'):
+            with st.spinner('Refreshing FD comparison data and preserving the complete RBI bank universe...'):
+                rr=refresh_fd_rates()
+            st.success(rr.get('message','FD refresh complete.'));cloud_rerun()
+        st.dataframe(f[[c for c in ['Provider','BankType','Product','GeneralRate%','SeniorRate%','RateDate','DataConfidence','Source','Notes'] if c in f.columns]],use_container_width=True,hide_index=True,height=620)
+        st.caption('Missing rate ≠ missing bank. The bank remains in the directory as REVIEW REQUIRED until a current rate is verified. Final chosen FD should be checked on the bank official page.')
+    with tab_po:
+        po=load_small_savings().copy()
+        if st.button('🔄 Refresh Post Office / small-savings rates',use_container_width=True,key='refresh_small_savings'):
+            with st.spinner('Checking Government / India Post sources...'):
+                rr=refresh_small_savings()
+            st.success(rr.get('message','Small-savings refresh complete.'));cloud_rerun()
+        st.dataframe(po,use_container_width=True,hide_index=True)
+        st.caption('Current quarter rate/date and validity are shown. When the validity period ends, confidence is automatically reduced until the new quarter is verified.')
+    with tab_all:
+        st.markdown('### Full master list')
+        edit=st.data_editor(opts,use_container_width=True,num_rows='dynamic',height=520,key='other_options_editor')
+        if st.button('💾 Save Investment Option Inputs'):
+            save_investment_options(edit);st.success('Saved locally.');cloud_rerun()
+        st.markdown('''#### Permanent Master Investment Universe
+- All RBI-listed public-sector, private-sector and small-finance-bank FD providers remain visible; current public comparison rates are filled where available.
 - Bank savings / sweep FD / general FD / senior-citizen FD / Small Finance Bank FD / NBFC & corporate FD / tax-saving FD / Bank & Post Office RD
-- Post Office Savings, 1Y/2Y/3Y/5Y Time Deposits, MIS
-- PPF, NSC, KVP, SCSS, Sukanya Samriddhi
+- Post Office Savings, 1Y/2Y/3Y/5Y Time Deposits, MIS, PPF, NSC, KVP, SCSS, Sukanya Samriddhi
 - 91D/182D/364D T-Bills, dated G-Sec, SDL, RBI/government savings bonds
 - Corporate bonds/NCDs and target-maturity debt products
 - NPS Tier I/Tier II, EPF/VPF and annuity/retirement-income products where eligible
 - REIT, InvIT, international funds/ETFs, secondary-market sovereign-gold instruments
-- Physical Gold/Silver (specialist timing remains in Gold / Silver)
-- Real estate, PMS, AIF, SIF/specialized funds
-- Unlisted/pre-IPO equity, P2P/private credit, insurance-linked products and collectibles as reduced-confidence/manual-review assets
+- Physical Gold/Silver, real estate, PMS, AIF, SIF/specialized funds, unlisted/pre-IPO equity, P2P/private credit, insurance-linked products and collectibles
 
-**Important:** a product can remain in the master list for tracking even when new investment is closed/restricted. `ActiveStatus`, current rate/date and data confidence determine whether it can be promoted to an actionable new-money recommendation.''')
+**Permanent rule:** nothing disappears merely because a free live source lacks a current value. The product remains visible as `REVIEW REQUIRED`; only verified/current data can become an actionable recommendation.''')
 
 if active_page=='🔔 Alerts':
     st.caption('Generated after DAILY UPDATE: Strong Buy, valid entry, target/stop outcomes and market-regime changes.')
@@ -1846,6 +1997,34 @@ if active_page=='📅 Corporate Events':
         st.write('• **INFO** — routine dividend/meeting/filing information: shown for awareness without automatically treating it as bad news.')
         st.caption('NSE filing endpoints can change. Data-health messages remain visible and stale/missing event data is never silently treated as current.')
 
+
+# ----------------- Data Vault -----------------
+if active_page=='🗄️ Data Vault':
+    st.caption('Historical/reference export center. Secrets are deliberately excluded from downloadable archives.')
+    inv=data_vault_inventory(BASE/'data')
+    a,b,c=st.columns(3);a.metric('Saved data files',f'{len(inv):,}');b.metric('Saved size',f"{inv.Bytes.sum()/1024/1024:.1f} MB" if not inv.empty else '0 MB');c.metric('Cloud full-data', 'CONNECTED' if cloud_status().get('enabled') else 'LOCAL ONLY')
+    with st.expander('Saved data inventory',expanded=False):
+        if inv.empty:st.info('No saved datasets yet.')
+        else:st.dataframe(inv,use_container_width=True,hide_index=True,height=500)
+    st.markdown('### Individual NSE stock — Excel')
+    _h=cached_history(CFG['history_sessions']) if _core_ready else pd.DataFrame();_syms=sorted(_h.Symbol.astype(str).unique()) if not _h.empty and 'Symbol' in _h.columns else []
+    if _syms:
+        _sym=st.selectbox('Stock',_syms,key='vault_stock')
+        _ev=cached_events();_an=load_announcements();_pn=load_stock_news(_sym)
+        _xlsx=data_vault_stock_excel(_sym,_h,radar,_ev,_an,_pn)
+        st.download_button('⬇ Download '+_sym+' complete Excel',data=_xlsx,file_name=f'{_sym}_Investment_Radar_History.xlsx',mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',use_container_width=True)
+    else:st.info('NSE history is not ready yet. Run Full Data Setup / Repair.')
+    st.markdown('### Reference tables — Excel')
+    _sheets={'Current Stock Radar':radar,'Mutual Funds':load_mf_universe(),'FD Rates':load_fd_rates(),'Post Office Savings':load_small_savings(),'FII DII':load_fii_dii(),'Market News':load_market_news(),'Corporate Events':cached_events()}
+    _ref=data_vault_category_excel(_sheets)
+    st.download_button('⬇ Download current reference tables',data=_ref,file_name='India_Investment_Radar_Reference_Tables.xlsx',mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',use_container_width=True)
+    st.markdown('### Complete Data Archive')
+    st.warning('A full archive can be large because it contains the saved NSE/MF/history caches. Create it only when you actually need a full offline copy.')
+    if st.button('📦 Prepare Complete Data Archive',use_container_width=True,key='prepare_vault_archive'):
+        with st.spinner('Compressing verified Radar data...'):st.session_state['vault_archive']=data_vault_complete_archive(BASE/'data')
+    if st.session_state.get('vault_archive'):
+        st.download_button('⬇ Download Complete Radar Data ZIP',data=st.session_state['vault_archive'],file_name='India_Investment_Radar_COMPLETE_DATA.zip',mime='application/zip',use_container_width=True)
+    st.caption('For anywhere viewing, use Radar itself. Excel is the portable/offline reference format; large raw history stays in the data archive/Supabase rather than being forced into one oversized Google Sheet.')
 
 # ----------------- Auto Data Center -----------------
 if active_page=='🧠 Auto Data Center':

@@ -1,5 +1,5 @@
 {
-  "app_version": "7.0.1 FULL RELIABILITY PREMIUM CLOUD-PERSISTENT \u2014 PERMANENT MASTER",
+  "app_version": "7.2.0 FINAL \u2014 MARKET INTELLIGENCE + DATA VAULT + FULL CLOUD SYNC",
   "history_sessions": 420,
   "min_history_for_radar": 90,
   "min_price": 20,
@@ -169,7 +169,7 @@
   "mf_deep_filter_max": 40,
   "mutual_funds_full_universe": true,
   "corporate_events_full": true,
-  "strategy_version": "7.0",
+  "strategy_version": "7.2",
   "data_trust_version": "1.0",
   "performance_mode": "FAST_LAZY",
   "lazy_page_loading": true,
@@ -186,5 +186,22 @@
   "configurable_theme_background": true,
   "mobile_responsive": true,
   "web_deploy_ready": true,
-  "recommendation_action_gate": "ACTIONABLE / REVIEW REQUIRED / DO NOT ACT"
+  "recommendation_action_gate": "ACTIONABLE / REVIEW REQUIRED / DO NOT ACT",
+  "cloud_full_data_sync": true,
+  "cloud_full_data_restore_on_start": true,
+  "cloud_sync_provider": "Supabase private Storage",
+  "cloud_pack_max_mb": 48,
+  "render_ephemeral_safe": true,
+  "independent_pages_before_nse_setup": true,
+  "institutional_flow": true,
+  "market_news_context": true,
+  "data_vault": true,
+  "market_news_topics": [
+    "India stock market Nifty Sensex",
+    "RBI India interest rates inflation",
+    "India rupee crude oil market",
+    "India mutual funds AMFI",
+    "India IPO market",
+    "India gold silver prices"
+  ]
 }

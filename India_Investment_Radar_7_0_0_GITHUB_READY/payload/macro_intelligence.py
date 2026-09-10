@@ -8,7 +8,7 @@ DIR=BASE/'data'/'macro';DIR.mkdir(parents=True,exist_ok=True)
 SUMMARY=DIR/'summary.csv';META=DIR/'meta.json'
 
 SERIES={
-    'Nifty 50':'^NSEI','Bank Nifty':'^NSEBANK','USD/INR':'INR=X','Crude Oil':'CL=F',
+    'Nifty 50':'^NSEI','Bank Nifty':'^NSEBANK','India VIX':'^INDIAVIX','USD/INR':'INR=X','Crude Oil':'CL=F',
     'Global Gold':'GC=F','Global Silver':'SI=F','S&P 500':'^GSPC','Nasdaq':'^IXIC'
 }
 

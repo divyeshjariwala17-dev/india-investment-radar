@@ -1,0 +1,10 @@
+1. Extract this ZIP.
+2. Copy/commit the CONTENTS of this folder to your PRIVATE GitHub repository india-investment-radar.
+3. Do not commit .env, Supabase secret keys, or Google service-account JSON.
+4. In Render Environment, set SUPABASE_URL, SUPABASE_SECRET_KEY, SUPABASE_BUCKET=radar-private.
+5. Optional Google cloud archive: set GOOGLE_SERVICE_ACCOUNT_JSON and GOOGLE_DRIVE_FOLDER_ID; optionally GOOGLE_SHEET_ID / GOOGLE_SHARE_EMAIL.
+6. Push to GitHub. Your existing GitHub-connected Render service can auto-deploy this Docker build.
+7. Open Radar -> System -> Sync Center -> test Supabase/Google.
+8. Run DAILY UPDATE — UPDATE EVERYTHING.
+
+Read GITHUB_RENDER_SETUP.md for full detail.

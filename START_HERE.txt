@@ -1,0 +1,141 @@
+INDIA INVESTMENT RADAR — FINAL USER GUIDE
+==========================================
+
+USE ONLY THIS FOLDER / ZIP:
+India_Investment_Radar_FINAL
+
+FIRST TIME — TOMORROW
+---------------------
+1. Extract the ZIP to:
+   C:\India_Investment_Radar
+
+2. Double-click:
+   setup_and_run.bat
+
+3. Your browser opens.
+
+4. On the LEFT click:
+   FIRST SETUP / FULL DATA
+
+5. Let NSE stock/ETF history and Mutual Fund data download.
+
+6. Click:
+   BUILD / REFRESH BACKTEST
+
+7. Open:
+   System Check
+
+8. Important lines should show PASS.
+   If something says FAIL, take ONE screenshot of the System Check page and send it in chat.
+
+NORMAL DAILY USE
+----------------
+1. Double-click run.bat
+2. Click DAILY UPDATE
+3. Check Market Outlook
+4. Check Stocks
+5. Check ETF / Gold
+6. Check Mutual Funds
+7. Check Fixed Income only after updating current yields
+8. Use Portfolio Planner when you want allocation by amount/risk/duration.
+
+STOCK FULL CARD — INCLUDED FOR SWING / SHORT / LONG
+---------------------------------------------------
+BUY / WATCH / AVOID
+Current
+Entry
+Support S1 / S2
+Resistance R1 / R2
+Target 1 + Potential %
+Target 2 + Potential %
+Stop Loss + Risk %
+Risk : Reward
+Duration
+Technical / Fundamental / Momentum / Overall
+Historical Signals
+Win Rate
+Risk
+Confidence
+Reasons
+Corporate-action check
+
+MARKET OUTLOOK
+--------------
+Next Day / 1 Week / 15 Days / 1 Month / 3 Months
+For each it shows:
+Bias
+Probability positive
+Median historical-similar return
+20–80% historical range
+Sample size
+Confidence
+
+These are probability scenarios, not guaranteed predictions.
+
+MUTUAL FUNDS
+------------
+INVEST / ACCUMULATE / WATCH / AVOID
+Current NAV
+1Y return
+3Y CAGR
+5Y CAGR
+Volatility
+Maximum Drawdown
+Positive Months
+Overall / Risk / Confidence
+Historical scenario range for:
+1 Month / 3 Months / 6 Months / 1 Year / 3 Years / 5 Years
+
+The system does NOT invent stock-style stop-losses for mutual funds.
+
+ETF / GOLD
+----------
+ETF and Gold ETF are exchange traded, so the stock-style card can show:
+Entry / S1 / S2 / R1 / R2 / Target 1 / Target 2 / Stop / R:R / Duration / Scores.
+
+BONDS / FIXED INCOME
+--------------------
+CONSIDER / WATCH / AVOID
+Yield / YTM
+Maturity
+Expected 1-year carry
+Expected compounded return to maturity
+Credit risk
+Interest-rate risk
+Liquidity
+Overall score
+
+IMPORTANT: The starting bond rows are templates. Update Yield% with the current actual quoted/auction YTM before acting.
+
+PORTFOLIO PLANNER
+-----------------
+Enter:
+Investment amount
+Risk: Low / Moderate / High
+Duration
+
+It gives allocation across:
+Stocks
+Equity Mutual Funds
+Fixed Income
+Gold / ETF
+Cash
+
+Scenario gains are planning ranges, not guarantees.
+
+IF IT DOES NOT WORK
+-------------------
+Do not reinstall random things.
+Open System Check.
+Take one screenshot showing the FAIL line and send it in chat.
+
+SECURITY
+--------
+Do not use the Alpha Vantage key previously pasted in chat.
+If you use Alpha Vantage later, regenerate a NEW key and enter it only in the local Settings page.
+
+IMPORTANT
+---------
+This is a research and decision-support system.
+No software can guarantee future market returns.
+The system measures accuracy using backtests and real forward outcomes instead of claiming a fake accuracy percentage.

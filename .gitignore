@@ -1,0 +1,29 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+backups/
+INSTALLATION_STATUS.json
+# Runtime/private data. Keep only shipped reference/seed files already tracked intentionally.
+data/bhavcopy/
+data/dashboard_cache/
+data/mf_histories/
+data/mutual_funds/
+data/crypto/
+data/macro/
+data/market_intelligence/
+data/vault/
+data/backups/
+data/my_portfolio.csv
+data/allocation_plans.csv
+data/recommendation_history.csv
+data/alerts.csv
+data/cloud_*.json
+data/google_archive_settings.json
+data/Google_Sheet_Data_Index.csv
+# Never commit credentials.
+*service-account*.json
+*credentials*.json

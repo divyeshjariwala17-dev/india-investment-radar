@@ -1,0 +1,253 @@
+{
+  "app_version": "7.3.0 FINAL MASTER — UNIFIED MARKET INTELLIGENCE + FORECAST + DATA VAULT + SYNC",
+  "history_sessions": 420,
+  "min_history_for_radar": 90,
+  "min_price": 20,
+  "min_latest_volume": 100000,
+  "min_median_traded_value_cr": 1.5,
+  "top_n": 10,
+  "backtest_universe_size": 220,
+  "fundamental_max_age_days": 45,
+  "corporate_action_block_days": 10,
+  "news_lookback_days": 10,
+  "alpha_refresh_symbols_per_run": 5,
+  "strong_buy": {
+    "overall": 85,
+    "technical": 80,
+    "momentum": 80,
+    "fundamental_long": 75,
+    "rr": 2.0,
+    "signals": 50,
+    "winrate": 60,
+    "walkforward_signals": 20,
+    "walkforward_winrate": 55
+  },
+  "position_risk_default_pct": 1.0,
+  "backup_keep": 12,
+  "etf_symbols": [
+    "NIFTYBEES",
+    "JUNIORBEES",
+    "BANKBEES",
+    "ITBEES",
+    "GOLDBEES",
+    "HDFCGOLD",
+    "SETFGOLD",
+    "KOTAKGOLD",
+    "SILVERBEES",
+    "MON100"
+  ],
+  "mutual_fund_searches": [
+    "Parag Parikh Flexi Cap Fund Direct Growth",
+    "HDFC Flexi Cap Fund Direct Growth",
+    "ICICI Prudential Bluechip Fund Direct Growth",
+    "SBI Bluechip Fund Direct Growth",
+    "HDFC Mid Cap Fund Direct Growth",
+    "Motilal Oswal Midcap Fund Direct Growth",
+    "Nippon India Small Cap Fund Direct Growth",
+    "SBI Small Cap Fund Direct Growth",
+    "UTI Nifty 50 Index Fund Direct Growth",
+    "HDFC Nifty 50 Index Fund Direct Growth",
+    "HDFC Balanced Advantage Fund Direct Growth",
+    "ICICI Prudential Balanced Advantage Fund Direct Growth",
+    "HDFC Corporate Bond Fund Direct Growth",
+    "ICICI Prudential Corporate Bond Fund Direct Growth",
+    "HDFC Short Term Debt Fund Direct Growth",
+    "ICICI Prudential Short Term Fund Direct Growth",
+    "HDFC Gold Fund Direct Growth",
+    "SBI Gold Fund Direct Growth"
+  ],
+  "portfolio_allocations": {
+    "LOW": {
+      "Stocks": 5,
+      "Equity Mutual Funds": 20,
+      "Fixed Income": 55,
+      "Gold/ETF": 15,
+      "Cash": 5
+    },
+    "MODERATE": {
+      "Stocks": 20,
+      "Equity Mutual Funds": 40,
+      "Fixed Income": 25,
+      "Gold/ETF": 10,
+      "Cash": 5
+    },
+    "HIGH": {
+      "Stocks": 40,
+      "Equity Mutual Funds": 40,
+      "Fixed Income": 10,
+      "Gold/ETF": 5,
+      "Cash": 5
+    }
+  },
+  "scan_all_nse": true,
+  "full_card_min_history": 20,
+  "precious_assets": {
+    "GOLD": {
+      "name": "Gold market proxy",
+      "symbols": [
+        "GOLDBEES",
+        "HDFCGOLD",
+        "SETFGOLD",
+        "KOTAKGOLD"
+      ]
+    },
+    "SILVER": {
+      "name": "Silver market proxy",
+      "symbols": [
+        "SILVERBEES"
+      ]
+    }
+  },
+  "crypto_symbols": [
+    "BTC",
+    "ETH",
+    "BNB",
+    "SOL",
+    "XRP",
+    "ADA",
+    "DOGE",
+    "AVAX",
+    "LINK",
+    "DOT",
+    "TRX",
+    "LTC",
+    "BCH",
+    "XLM",
+    "UNI"
+  ],
+  "ipo": {
+    "official_nse_refresh": true,
+    "gmp_weight": "LOW",
+    "separate_listing_and_long_term_scores": true
+  },
+  "investment_universe": [
+    "STOCKS",
+    "ETF",
+    "MUTUAL FUNDS",
+    "BONDS/FIXED INCOME",
+    "PHYSICAL GOLD",
+    "PHYSICAL SILVER",
+    "CRYPTO",
+    "IPO/SME IPO",
+    "REIT/INVIT",
+    "FD/RD",
+    "PPF/NSC/KVP/SCSS/SUKANYA/POST OFFICE",
+    "NPS",
+    "G-SEC/T-BILL/SDL",
+    "INTERNATIONAL ETF/FUND",
+    "SECONDARY GOLD BONDS",
+    "REAL ESTATE",
+    "PMS/AIF",
+    "CASH/OTHER"
+  ],
+  "optimizer": {
+    "default_amount": 50000,
+    "default_duration_days": 182,
+    "default_risk": "AUTO",
+    "minimum_reserve_pct": 5,
+    "consider_existing_portfolio": true,
+    "allow_hold_cash": true,
+    "same_13_question_explanation": true,
+    "exact_required_date_filter": true,
+    "target_return_mode": true,
+    "tax_inflation_assumptions_editable": true
+  },
+  "segment_drilldown": {
+    "enabled": true,
+    "path": "segment -> category/product form -> exact product -> amount -> timing -> scenario -> explanation -> track",
+    "recommended_choice_preselected": true
+  },
+  "physical_reference": {
+    "automatic_converted_reference": true,
+    "method": "Global futures × USDINR conversion; local/dealer quote overrides",
+    "not_retail_final_rate": true
+  },
+  "corporate_events_back_days": 45,
+  "corporate_events_forward_days": 120,
+  "mf_full_universe_source": "AMFI Complete NAV; MFAPI fallback/history",
+  "mf_auto_segment_candidates": 30,
+  "mf_deep_filter_max": 40,
+  "mutual_funds_full_universe": true,
+  "corporate_events_full": true,
+  "strategy_version": "7.3.0",
+  "data_trust_version": "1.0",
+  "performance_mode": "FAST_LAZY",
+  "lazy_page_loading": true,
+  "optimizer_result_cache": "SESSION",
+  "segment_result_cache": "SESSION",
+  "default_landing_page": "📣 Daily Recommendations",
+  "daily_recommendations_page": true,
+  "full_master_investment_universe": true,
+  "free_first_source_policy": true,
+  "automatic_paid_usage": false,
+  "automatic_plan_upgrade": false,
+  "source_cooldown_manager": true,
+  "visible_process_progress": true,
+  "configurable_theme_background": true,
+  "mobile_responsive": true,
+  "web_deploy_ready": true,
+  "recommendation_action_gate": "ACTIONABLE / REVIEW REQUIRED / DO NOT ACT",
+  "cloud_full_data_sync": true,
+  "cloud_full_data_restore_on_start": true,
+  "cloud_sync_provider": "Supabase private Storage",
+  "cloud_pack_max_mb": 48,
+  "render_ephemeral_safe": true,
+  "independent_pages_before_nse_setup": true,
+  "institutional_flow": true,
+  "market_news_context": true,
+  "data_vault": {
+    "dated_snapshots": true,
+    "preserve_actual_known_state": true,
+    "compact_format_priority": [
+      "parquet",
+      "csv.gz"
+    ],
+    "complete_zip_export": true,
+    "instrument_history_export": true
+  },
+  "market_news_topics": [
+    "India stock market Nifty Sensex",
+    "RBI India interest rates inflation",
+    "India rupee crude oil market",
+    "India mutual funds AMFI",
+    "India IPO market",
+    "India gold silver prices"
+  ],
+  "market_intelligence_v2": {
+    "enabled": true,
+    "institutional_weight_pct": 30,
+    "derivatives_weight_pct": 18,
+    "breadth_weight_pct": 27,
+    "macro_weight_pct": 20,
+    "vix_weight_pct": 5,
+    "max_stock_score_adjustment": 5,
+    "max_forecast_probability_adjustment_pp": 7,
+    "archive_1d_5d_20d_60d": true,
+    "company_evidence_primary": true,
+    "market_context_is_modifier": true,
+    "critical_safety_gates_override": true
+  },
+  "forecasting": {
+    "probability_based": true,
+    "horizons": [
+      "Next Day",
+      "1 Week",
+      "15 Days",
+      "1 Month",
+      "3 Months"
+    ],
+    "point_prediction_guarantee": false,
+    "historical_analogue": true,
+    "regime_adjusted": true,
+    "calibration_tracking": true
+  },
+  "google_archive": {
+    "optional": true,
+    "modes": [
+      "Google Drive Desktop",
+      "Google API service account"
+    ],
+    "live_sync_primary": "Supabase",
+    "google_role": "Long-term archive + readable index"
+  }
+}
